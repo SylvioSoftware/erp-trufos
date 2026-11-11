@@ -60,6 +60,42 @@ header img {
 }
 
 /* ==========================================================================
+   AJUSTES DO CABEÇALHO COMPACTO (ERP)
+   ========================================================================== */
+header.header-erp {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 30px;
+  background: transparent;
+  border-bottom: 3px solid var(--azul-trufos);
+  flex-direction: row; /* Garante que fiquem lado a lado */
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza o conjunto no topo */
+  gap: 20px; /* Espaço entre o logo e o texto */
+}
+
+.logo-erp {
+  height: 55px; /* Reduz drasticamente a altura do logo para caber no topo */
+  width: auto;
+}
+
+.header-text-erp h1 {
+  font-size: 1.4em;
+  color: var(--azul-logo-trufos);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 0 0 2px 0;
+}
+
+.header-text-erp p {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--azul-trufos);
+  font-weight: bold;
+}
+
+/* ==========================================================================
    MENU DE NAVEGAÇÃO E SUBMENUS (DROPDOWN)
    ========================================================================== */
 nav {
@@ -117,6 +153,82 @@ nav li:hover .dropdown {
 }
 
 /* ==========================================================================
+   MENU LATERAL RETRÁTIL (DESKTOP)
+   ========================================================================== */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--azul-trufos);
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease; /* Transição suave ao encolher/expandir */
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* Estado Minimizado (Fica apenas com a largura dos ícones) */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+/* Itens do Menu */
+.sidebar .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+
+.sidebar .menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .menu-item i {
+  font-size: 1.2em;
+  min-width: 30px;
+  text-align: center;
+}
+
+/* Quando minimizado, esconde o texto e mostra só o ícone */
+.sidebar.collapsed .menu-text {
+  display: none;
+}
+
+/* Botão de Retrair/Expandir na base do menu */
+.sidebar-toggle {
+  margin-top: auto;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.15);
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.1em;
+  transition: background 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Ajuste do conteúdo principal para acompanhar o menu */
+.main-content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
+/* ==========================================================================
    CONTEÚDO PRINCIPAL (CONTAINER E GRIDS)
    ========================================================================== */
 .container {
@@ -160,12 +272,6 @@ h3 {
 .tamanho-h4 {
   font-size: 16px;
   font-weight: bold; /* Mantém o negrito típico de títulos */
-}
-
-.grid {
-  display: flex;
-  gap: 50px;
-  margin-top: 40px;
 }
 
 .col {
@@ -333,12 +439,6 @@ footer a:hover {
   /* IMPORTANTE: Cancela o hover do desktop para o JS assumir o controle total no celular */
   nav li:hover .dropdown {
     display: none;
-  }
-
-  /* Mantém o link pai clicável para o JS, mas sem disparar a navegação */
-  .link-pai {
-    cursor: pointer;
-    display: block;
   }
 }
 /* ==========================================================================
