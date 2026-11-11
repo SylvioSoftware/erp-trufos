@@ -1,0 +1,395 @@
+/* ==========================================================================
+   CONFIGURAÇÕES GERAIS E VARIÁVEIS (CORES E GRADIENTE)
+   ========================================================================== */
+:root {
+  --azul-logo-trufos: #2e3091; /* Cor exata das letras do logo */
+  --azul-trufos: #0056b3;
+  --azul-escuro: #004494;
+  --branco: #ffffff;
+  --fundo: #f9f9f9;
+  --meio-gradiente: #95c29d;
+  --borda-gradiente: #378d8e;
+}
+
+/* Alterado para 'html' para garantir que cubra a tela inteira desde o topo */
+/* Aplicação do gradiente de borda a borda */
+html {
+  height: 100%;
+  background: linear-gradient(
+      to right,
+      var(--borda-gradiente),
+      var(--meio-gradiente),
+      var(--borda-gradiente)
+    )
+    fixed;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: transparent; /* Garante que o body não cubra o gradiente do html */
+}
+
+/* ==========================================================================
+   CABEÇALHO (LOGO E SLOGAN)
+   ========================================================================== */
+header {
+  background: transparent;
+  padding: 30px 40px;
+  border-bottom: 4px solid var(--azul-trufos);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+header img {
+  height: 115px;
+  width: auto;
+  margin-bottom: 8px;
+}
+
+.header-text p {
+  margin: 0;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 1.3em;
+  color: var(--azul-logo-trufos); /* Azul solicitado #2e3091 */
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   MENU DE NAVEGAÇÃO E SUBMENUS (DROPDOWN)
+   ========================================================================== */
+nav {
+  background: var(--azul-trufos);
+  position: relative;
+  z-index: 1000;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav li {
+  position: relative;
+}
+
+nav a {
+  color: var(--branco);
+  text-decoration: none;
+  padding: 15px 25px;
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  background: var(--azul-escuro);
+}
+
+/* Submenu que aparece ao passar o mouse */
+.dropdown {
+  display: none;
+  position: absolute;
+  background: var(--azul-escuro);
+  min-width: 220px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown a {
+  padding: 12px 15px;
+  text-transform: none;
+  font-size: 0.9em;
+  border-bottom: 1px solid var(--azul-trufos);
+  text-align: left;
+}
+
+nav li:hover .dropdown {
+  display: block;
+}
+
+/* ==========================================================================
+   CONTEÚDO PRINCIPAL (CONTAINER E GRIDS)
+   ========================================================================== */
+.container {
+  padding: 40px;
+  max-width: 1000px;
+  margin: 30px auto;
+  background: var(--branco);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+h2 {
+  color: var(--azul-trufos);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+h3 {
+  color: var(--azul-trufos);
+}
+
+/* Criando uma classe que imita o tamanho do h1 padrão */
+.tamanho-h1 {
+  font-size: 32px;
+  font-weight: bold; /* Mantém o negrito típico de títulos */
+}
+
+/* Criando uma classe que imita o tamanho do h2 padrão */
+.tamanho-h2 {
+  font-size: 24px;
+  font-weight: bold; /* Mantém o negrito típico de títulos */
+}
+
+/* Criando uma classe que imita o tamanho do h3 padrão */
+.tamanho-h3 {
+  font-size: 18.7px;
+  font-weight: bold; /* Mantém o negrito típico de títulos */
+}
+
+/* Criando uma classe que imita o tamanho do h4 padrão */
+.tamanho-h4 {
+  font-size: 16px;
+  font-weight: bold; /* Mantém o negrito típico de títulos */
+}
+
+.grid {
+  display: flex;
+  gap: 50px;
+  margin-top: 40px;
+}
+
+.col {
+  flex: 1;
+}
+
+/* ==========================================================================
+   TITULO DE LISTAS
+   ========================================================================== */
+
+/* Remove o excesso de espaço abaixo do título específico */
+.titulo-lista {
+  margin-bottom: 5px; /* Quanto menor o número, mais perto da lista ele fica */
+  /*padding-bottom: 0;*/
+  /*border-bottom: 2px solid var(--azul-trufos); /* Opcional: uma linha fina embaixo fica elegante */
+  display: inline-block; /* Faz a linha do título não ocupar a largura toda se quiser */
+  width: 100%;
+}
+
+/* Garante que a lista não tenha margem no topo para não somar com a do título */
+.grid {
+  margin-top: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 50px;
+}
+
+.grid ul {
+  margin-top: 5px; /* Ajuste fino para a primeira linha da lista */
+}
+
+/* ==========================================================================
+   RODAPÉ INSTITUCIONAL
+   ========================================================================== */
+footer {
+  background: var(--azul-trufos);
+  color: var(--branco);
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 0.9em;
+  margin-top: 60px;
+}
+
+.footer-link {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Isso garante que TODOS os links dentro do rodapé sejam da mesma cor */
+footer a,
+footer a:visited,
+footer a:link {
+  color: white !important; /* Ou a cor que você escolher */
+  text-decoration: underline;
+}
+
+/* Quando o mouse passar por cima, ele dá um leve brilho */
+footer a:hover {
+  color: #f0f0f0 !important;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   BOTÃO FLUTUANTE DO WHATSAPP
+   ========================================================================== */
+.whatsapp-float {
+  position: fixed;
+  width: 65px;
+  height: 65px;
+  bottom: 40px;
+  right: 40px;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   MENU RESPONSIVO (MOBILE)
+   ========================================================================== */
+
+/* Botão oculto por padrão (Desktop) */
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 15px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-btn span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: var(--branco);
+  transition: 0.3s;
+}
+
+/* Regras para telas menores (Celulares) */
+@media (max-width: 768px) {
+  .menu-btn {
+    display: flex; /* Mostra o botão no celular */
+  }
+
+  nav ul {
+    display: none; /* Esconde o menu por padrão no celular */
+    flex-direction: column;
+    width: 100%;
+    background: var(--azul-escuro);
+  }
+
+  nav ul.active {
+    display: flex; /* Mostra quando a classe 'active' for adicionada pelo JS */
+  }
+
+  nav ul li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dropdown {
+    position: static; /* No celular, o submenu fica dentro do fluxo normal */
+    width: 100%;
+    /*box-shadow: none;*/
+    display: none; /* JS controla a exibição */
+    background: #003366; /* Um azul um pouco mais escuro para dar contraste */
+  }
+
+  .dropdown a {
+    display: block;
+    padding: 15px 40px !important; /* Mais recuo para parecer subitem */
+    color: white !important;
+    text-transform: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .grid {
+    flex-direction: column; /* Em vez de lado a lado (row), fica um sobre o outro */
+    gap: 15px; /* Espaço vertical entre as listas de marcas */
+  }
+
+  .grid .col {
+    width: 100%; /* Garante que a lista use toda a largura da tela */
+    padding: 0 10px; /* Evita que o texto encoste na borda da tela */
+  }
+
+  /* Ajuste extra para as listas não ficarem com muito recuo */
+  .grid ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+
+  /* Desabilita o link no menu-pai */
+  .link-pai {
+    cursor: pointer !important;
+    display: block;
+    -webkit-tap-highlight-color: transparent; /* Remove aquele brilho azul de clique no celular */
+  }
+
+  /* IMPORTANTE: Cancela o hover do desktop para o JS assumir o controle total no celular */
+  nav li:hover .dropdown {
+    display: none;
+  }
+
+  /* Mantém o link pai clicável para o JS, mas sem disparar a navegação */
+  .link-pai {
+    cursor: pointer;
+    display: block;
+  }
+}
+/* ==========================================================================
+   ESTILOS PARA AS SANFONAS (DETAILS/SUMMARY) - CONTEÚDO HISTÓRICO
+   ========================================================================== */
+details {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fcfcfc;
+  transition: all 0.3s ease;
+}
+
+summary {
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--azul-trufos); /* Usando sua variável oficial */
+  outline: none;
+  font-size: 1.1em;
+}
+
+details[open] {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+details[open] summary {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Formatação interna dos textos das sanfonas */
+.conteudo-antigo p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.conteudo-antigo ul {
+  margin-bottom: 15px;
+  padding-left: 25px;
+}
+
+/* Bloco de Alerta Técnico (Destaque para o diferencial da Trufos) */
+.alerta-tecnico {
+  background-color: #fff3cd;
+  padding: 20px;
+  border-left: 5px solid #ffc107;
+  margin: 20px 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.95em;
+  color: #856404;
+}
