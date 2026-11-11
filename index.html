@@ -1,87 +1,240 @@
 <!doctype html>
 <html lang="pt-br">
-  <!-- ==========================================================================
-        CABEÇALHO
-  ========================================================================== -->
   <head>
-    <meta
-      name="description"
-      content="Painel ERP interno da Trufos - Assistência Técnica Hospitalar."
-    />
-    <meta name="author" content="Trufos - Sylvio Alves" />
-    <!-- INFORME ABAIXO O NOME DA PAGINA, AQUELE QUE IRA APARECER NA PARTE
-    SUPERIOR DA ABA -->
-    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
-    <title>Trufos ERP - Painel de Gestão</title>
-
-    <!-- ==========================================================================
-          SCRIPT DE CONGURACAO DO SITE (CABECALHO, RODAPE, MENU E FORMATACAO)
-    =========================================================================== -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Painel de Controle</title>
     <link rel="stylesheet" href="css/estilo.css" />
-    <script src="/js/componentes.js"></script>
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
     <script src="js/auth.js"></script>
   </head>
-  <!-- ==========================================================================
-        CORPO DO SITE
-  =========================================================================== -->
   <body>
-    <!-- ==========================================================================
-          CABEÇALHO (LOGO E SLOGAN)
-    ========================================================================== -->
-    <header class="header-erp">
-      <img src="img/logo.png" alt="Logo Trufos" class="logo-erp" />
-      <div class="header-text-erp">
-        <h1>Painel de Controle</h1>
-        <p>Trufos – Assistência Técnica Hospitalar</p>
+    <!-- NAV LATERAL RETRÁTIL (DESKTOP) -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header" style="padding: 15px; text-align: center">
+        <img
+          src="img/logo.png"
+          alt="Trufos"
+          style="max-width: 140px; height: auto"
+          class="menu-text"
+        />
       </div>
-    </header>
 
-    <!-- ==========================================================================
-          MENU DE NAVEGAÇÃO E SUBMENUS (DROPDOWN)
-    ========================================================================== -->
-    <nav>
-      <ul>
-        <li><a href="index.html" class="ativo">Início</a></li>
-        <li><a href="clientes.html">Clientes</a></li>
-        <li><a href="vendas.html">Orçamentos / Vendas</a></li>
-      </ul>
+      <div class="menu-links">
+        <a href="index.html" class="menu-item active">
+          <i>🏠</i> <span class="menu-text">Painel Principal</span>
+        </a>
+        <a href="ordens-servico.html" class="menu-item">
+          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
+        </a>
+        <a href="clientes.html" class="menu-item">
+          <i>👥</i> <span class="menu-text">Clientes</span>
+        </a>
+        <a href="equipamentos.html" class="menu-item">
+          <i>🔬</i> <span class="menu-text">Equipamentos</span>
+        </a>
+      </div>
+
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i>≡</i>
+      </button>
     </nav>
 
-    <!-- ==========================================================================
-          ALTERE A SECAO MAIN (ABAIXO) PARA INSERIR O CONTEUDO DO SITE
-    =========================================================================== -->
-    <main class="container">
-      <section id="painel-inicial">
-        <h1>Painel de Controle</h1>
-        <p>
-          Bem-vindo ao sistema de gestão interna da <strong>Trufos</strong>.
-          Utilize o menu acima para navegar entre os cadastros de clientes e a
-          emissão de orçamentos e vendas.
-        </p>
-      </section>
+    <!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Painel de Gestão Operacional</h1>
+          <p>Resumo proativo de manutenções, chamados e fluxo de OS</p>
+        </div>
+      </header>
 
-      <div class="grid">
-        <section id="atalhos" class="col">
-          <h2>Atalhos Rápidos</h2>
-          <p>
-            • <a href="clientes.html">Gerenciar Clientes e Contatos</a><br />
-            • <a href="vendas.html">Lançar Novo Orçamento / Venda</a>
-          </p>
-        </section>
-        <section id="status-sistema" class="col">
-          <h2>Status da Operação</h2>
-          <p>
-            Banco de dados PostgreSQL conectado e operacional em ambiente de
-            produção.
-          </p>
-        </section>
+      <div class="dashboard-grid">
+        <!-- CARD 1: PRÓXIMAS MANUTENÇÕES PREVISTAS -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>📅 Próximas Manutenções</h2>
+            <a
+              href="equipamentos.html"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Ver todos</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Equipamento</th>
+                  <th>Vencimento</th>
+                </tr>
+              </thead>
+              <tbody id="listaManutencoes">
+                <tr class="clicavel">
+                  <td>Hospital São Lucas</td>
+                  <td>Autoclave Sercon 100L</td>
+                  <td>
+                    <span class="badge-status badge-vencido"
+                      >Vencido (10/11)</span
+                    >
+                  </td>
+                </tr>
+                <tr class="clicavel">
+                  <td>Clínica Balestro</td>
+                  <td>Lavadora Ultrassônica</td>
+                  <td>
+                    <span class="badge-status badge-alerta">Em 5 dias</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CARD 2: ORDENS DE SERVIÇO EM ANDAMENTO / ABERTO -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>🛠️ Ordens de Serviço (Fila)</h2>
+            <a
+              href="ordens-servico.html"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Gerenciar OS</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>OS</th>
+                  <th>Cliente / Aparelho</th>
+                  <th>Fase</th>
+                </tr>
+              </thead>
+              <tbody id="listaOsAberto">
+                <tr class="clicavel">
+                  <td><strong>#1042</strong></td>
+                  <td>
+                    Clínica Balestro<br /><small style="color: #666"
+                      >Termoacumulador</small
+                    >
+                  </td>
+                  <td>
+                    <span class="badge-status status-avaliacao">Avaliação</span>
+                  </td>
+                </tr>
+                <tr class="clicavel">
+                  <td><strong>#1045</strong></td>
+                  <td>
+                    Hospital Regina<br /><small style="color: #666"
+                      >Autoclave Tuttnauer</small
+                    >
+                  </td>
+                  <td>
+                    <span class="badge-status status-andamento"
+                      >Em Andamento</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CARD 3: ORÇAMENTOS PENDENTES (VIA OS) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>📄 Orçamentos Pendentes</h2>
+            <a
+              href="ordens-servico.html?filtro=orcamento"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Ver todos</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>OS / Data</th>
+                  <th>Cliente</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="listaOrcamentos">
+                <tr>
+                  <td><strong>#1040</strong><br /><small>10/11/2026</small></td>
+                  <td>Hospital Moinhos</td>
+                  <td>
+                    <button
+                      class="btn-acao"
+                      title="Aprovar Orçamento"
+                      onclick="aprovarOrcamento(1040)"
+                    >
+                      ✅
+                    </button>
+                    <button
+                      class="btn-acao"
+                      title="Cancelar"
+                      onclick="cancelarOrcamento(1040)"
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
-    <!-- ==========================================================================
-          RODAPE
-    =========================================================================== -->
-    <footer>
-      <p>Trufos ERP – Uso Interno Restrito | Desenvolvido por Sylvio Alves</p>
-    </footer>
+
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+        localStorage.setItem(
+          "sidebar_collapsed",
+          sidebar.classList.contains("collapsed"),
+        );
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("sidebar_collapsed") === "true") {
+          document.getElementById("sidebar").classList.add("collapsed");
+        }
+      });
+
+      function aprovarOrcamento(osId) {
+        if (
+          confirm(
+            `Deseja aprovar o orçamento da OS #${osId}? Ela passará para execução.`,
+          )
+        ) {
+          alert(`OS #${osId} aprovada com sucesso!`);
+          location.reload();
+        }
+      }
+
+      function cancelarOrcamento(osId) {
+        const motivo = prompt(
+          `Informe o motivo do cancelamento da OS #${osId}:`,
+        );
+        if (motivo && motivo.trim() !== "") {
+          alert(`OS #${osId} cancelada. Motivo: ${motivo}`);
+          location.reload();
+        }
+      }
+    </script>
   </body>
 </html>
