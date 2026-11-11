@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Gestão de Clientes</title>
+    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/auth.js"></script>
+    <style>
+      .page-header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px; /* Empurra a barra de pesquisa e o botão para baixo */
+        margin-bottom: 20px;
+      }
+      .btn-principal {
+        background: var(--azul-trufos);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+      }
+      .btn-principal:hover {
+        background: #0056b3;
+      }
+
+      .card-tabela {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e1e4e8;
+        overflow: hidden;
+        padding: 20px;
+      }
+      .tabela-dados {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+      }
+      .tabela-dados th,
+      .tabela-dados td {
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 1px solid #edf2f7;
+      }
+      .tabela-dados th {
+        background: #f8f9fa;
+        color: #475569;
+        font-weight: 600;
+      }
+      .tabela-dados tr:hover {
+        background: #f0f7ff;
+      }
+
+      /* Estilo visual para a funcionalidade futura de Leads/WhatsApp */
+      .badge-lead {
+        background: #e2e8f0;
+        color: #64748b;
+        font-size: 0.75em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV LATERAL RETRÁTIL -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header" style="padding: 15px; text-align: center">
+        <img
+          src="img/logo.png"
+          alt="Trufos"
+          style="max-width: 140px; height: auto"
+          class="menu-text"
+        />
+      </div>
+
+      <div class="menu-links">
+        <a href="index.html" class="menu-item">
+          <i>🏠</i> <span class="menu-text">Painel Principal</span>
+        </a>
+        <a href="ordens-servico.html" class="menu-item">
+          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
+        </a>
+        <a href="clientes.html" class="menu-item active">
+          <i>👥</i> <span class="menu-text">Clientes</span>
+        </a>
+        <a href="equipamentos.html" class="menu-item">
+          <i>🔬</i> <span class="menu-text">Equipamentos</span>
+        </a>
+      </div>
+
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i>≡</i>
+      </button>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Clientes</h1>
+          <p>
+            Gerenciamento de cadastros, contatos e prazos default de manutenção
+          </p>
+        </div>
+      </header>
+
+      <div class="page-header-actions">
+        <input
+          type="text"
+          id="filtroCliente"
+          placeholder="🔍 Buscar por nome, CNPJ ou cidade..."
+          style="
+            padding: 10px;
+            width: 320px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+          "
+        />
+        <button class="btn-principal" onclick="abrirModalNovoCliente()">
+          + Novo Cliente
+        </button>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Razão Social / Nome Fantasia</th>
+              <th>CNPJ</th>
+              <th>Contato</th>
+              <th>WhatsApp/th></th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listaClientesTabela">
+            <tr>
+              <td><strong>#1</strong></td>
+              <td>Hospital São Lucas <span class="badge-lead">Ativo</span></td>
+              <td>92.802.730/0001-40</td>
+              <td>Renato</td>
+              <td>(51) 99888-7766</td>
+              <td>
+                <button class="btn-acao" title="Editar">✏️</button>
+                <button class="btn-acao" title="Ver Equipamentos">🔬</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>#2</strong></td>
+              <td>Clínica Balestro</td>
+              <td>11.222.333/0001-99</td>
+              <td>João</td>
+              <td>(51) 98765-4321</td>
+              <td>
+                <button class="btn-acao" title="Editar">✏️</button>
+                <button class="btn-acao" title="Ver Equipamentos">🔬</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+        localStorage.setItem(
+          "sidebar_collapsed",
+          sidebar.classList.contains("collapsed"),
+        );
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("sidebar_collapsed") === "true") {
+          document.getElementById("sidebar").classList.add("collapsed");
+        }
+      });
+
+      function abrirModalNovoCliente() {
+        alert(
+          "Aqui abrirá o modal de cadastro de novo cliente (integrado futuramente com validação de CNPJ automática).",
+        );
+      }
+    </script>
+  </body>
+</html>
