@@ -12,7 +12,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 15px; /* Empurra a barra de pesquisa e o botão para baixo */
+        margin-top: 15px;
         margin-bottom: 20px;
       }
       .btn-principal {
@@ -60,14 +60,83 @@
         background: #f0f7ff;
       }
 
-      /* Estilo visual para a funcionalidade futura de Leads/WhatsApp */
-      .badge-lead {
-        background: #e2e8f0;
-        color: #64748b;
-        font-size: 0.75em;
-        padding: 2px 6px;
+      .btn-acao {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        padding: 6px 8px;
         border-radius: 4px;
-        margin-left: 6px;
+        cursor: pointer;
+        margin-right: 3px;
+        font-size: 0.85em;
+        transition: background 0.2s;
+      }
+      .btn-acao:hover {
+        background: #e2e8f0;
+      }
+
+      /* Estilização otimizada para o Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal-card {
+        background: white;
+        padding: 35px;
+        border-radius: 10px;
+        width: 750px;
+        max-width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .form-row-3 {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .form-row-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .form-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85em;
+        color: #334155;
+        margin-bottom: 6px;
+      }
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 0.95em;
+        box-sizing: border-box;
+      }
+      .form-input:focus {
+        border-color: var(--azul-trufos);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
       }
     </style>
   </head>
@@ -108,9 +177,7 @@
       <header class="header-erp">
         <div class="header-text-erp">
           <h1>Clientes</h1>
-          <p>
-            Gerenciamento de cadastros, contatos e prazos default de manutenção
-          </p>
+          <p>Gerenciamento de cadastros, endereços e prazos de manutenção</p>
         </div>
       </header>
 
@@ -119,12 +186,8 @@
           type="text"
           id="filtroCliente"
           placeholder="🔍 Buscar por nome, CNPJ ou cidade..."
-          style="
-            padding: 10px;
-            width: 320px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-          "
+          class="form-input"
+          style="width: 320px"
         />
         <button class="btn-principal" onclick="abrirModalNovoCliente()">
           + Novo Cliente
@@ -138,39 +201,243 @@
               <th>ID</th>
               <th>Razão Social / Nome Fantasia</th>
               <th>CNPJ</th>
-              <th>Contato</th>
-              <th>WhatsApp/th></th>
-              <th>Ações</th>
+              <th>Cidade / UF</th>
+              <th>Prazo (Meses)</th>
+              <th>Ações Operacionais (Hub)</th>
             </tr>
           </thead>
           <tbody id="listaClientesTabela">
-            <tr>
-              <td><strong>#1</strong></td>
-              <td>Hospital São Lucas <span class="badge-lead">Ativo</span></td>
-              <td>92.802.730/0001-40</td>
-              <td>Renato</td>
-              <td>(51) 99888-7766</td>
-              <td>
-                <button class="btn-acao" title="Editar">✏️</button>
-                <button class="btn-acao" title="Ver Equipamentos">🔬</button>
-              </td>
-            </tr>
-            <tr>
-              <td><strong>#2</strong></td>
-              <td>Clínica Balestro</td>
-              <td>11.222.333/0001-99</td>
-              <td>João</td>
-              <td>(51) 98765-4321</td>
-              <td>
-                <button class="btn-acao" title="Editar">✏️</button>
-                <button class="btn-acao" title="Ver Equipamentos">🔬</button>
-              </td>
-            </tr>
+            <!-- Dados injetados dinamicamente via js/clientes.js -->
           </tbody>
         </table>
       </div>
     </main>
 
+    <!-- MODAL DE NOVO CLIENTE -->
+    <div id="modalCliente" class="modal-overlay">
+      <div class="modal-card">
+        <h2
+          style="
+            margin-top: 0;
+            color: var(--azul-logo-trufos);
+            margin-bottom: 25px;
+          "
+        >
+          Novo Cliente / Hospital
+        </h2>
+
+        <form id="formCliente" onsubmit="salvarCliente(event)">
+          <input type="hidden" id="clienteIdEdicao" />
+
+          <!-- CNPJ -->
+          <div class="form-group">
+            <label class="form-label">CNPJ *</label>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                id="cnpj"
+                placeholder="00.000.000/0001-00"
+                required
+                class="form-input"
+                onblur="consultarCNPJ(this.value)"
+              />
+              <button
+                type="button"
+                onclick="consultarCNPJ(document.getElementById('cnpj').value)"
+                style="
+                  background: #e2e8f0;
+                  border: 1px solid #cbd5e1;
+                  padding: 0 18px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                🔍 Buscar
+              </button>
+            </div>
+            <small
+              id="statusCnpj"
+              style="
+                color: #64748b;
+                font-size: 0.8em;
+                margin-top: 4px;
+                display: block;
+              "
+            ></small>
+          </div>
+
+          <!-- RAZÃO SOCIAL E FANTASIA -->
+          <div class="form-row">
+            <div>
+              <label class="form-label">Razão Social *</label>
+              <input
+                type="text"
+                id="razao_social"
+                required
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Nome Fantasia</label>
+              <input type="text" id="nome_fantasia" class="form-input" />
+            </div>
+          </div>
+
+          <!-- INSCRIÇÕES FISCAIS -->
+          <div class="form-row">
+            <div>
+              <label class="form-label">Inscrição Estadual (IE)</label>
+              <input
+                type="text"
+                id="inscricao_estadual"
+                class="form-input"
+                placeholder="Isento ou número"
+              />
+            </div>
+            <div>
+              <label class="form-label">Inscrição Municipal (IM)</label>
+              <input type="text" id="inscricao_municipal" class="form-input" />
+            </div>
+          </div>
+
+          <!-- ENDEREÇO (CEP, LOGRADOURO, NÚMERO, COMPLEMENTO) -->
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">CEP</label>
+              <input
+                type="text"
+                id="cep"
+                placeholder="00000-000"
+                class="form-input"
+              />
+            </div>
+            <div style="grid-column: span 2">
+              <label class="form-label">Logradouro / Endereço</label>
+              <input
+                type="text"
+                id="logradouro"
+                placeholder="Ex: Av. Ipiranga"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Número</label>
+              <input
+                type="text"
+                id="numero"
+                placeholder="Nº"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">Complemento</label>
+              <input
+                type="text"
+                id="complemento"
+                placeholder="Sala, Bloco..."
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Bairro</label>
+              <input type="text" id="bairro" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">Cidade</label>
+              <input type="text" id="cidade" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">UF</label>
+              <input type="text" id="uf" class="form-input" maxlength="2" />
+            </div>
+          </div>
+
+          <!-- PRAZO PADRÃO -->
+          <div class="form-group">
+            <label class="form-label"
+              >Prazo Padrão de Manutenção Preventiva (Meses)</label
+            >
+            <input
+              type="number"
+              id="prazo_manutencao"
+              value="12"
+              min="1"
+              max="60"
+              class="form-input"
+            />
+          </div>
+
+          <!-- RODAPÉ COM BOTÕES -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 25px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 20px;
+            "
+          >
+            <button
+              type="button"
+              id="btnModalContatos"
+              style="
+                background: #f1f5f9;
+                color: #94a3b8;
+                border: 1px solid #cbd5e1;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: not-allowed;
+                font-weight: 600;
+                opacity: 0.6;
+                transition: all 0.2s;
+              "
+              disabled
+              onclick="abrirContatosClienteAtual()"
+            >
+              👥 Contatos / Pessoas
+            </button>
+
+            <div style="display: flex; gap: 10px">
+              <button
+                type="button"
+                onclick="fecharModalCliente()"
+                style="
+                  background: #e2e8f0;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                style="
+                  background: var(--azul-trufos);
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Salvar Cliente
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/clientes.js"></script>
     <script>
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
@@ -186,12 +453,6 @@
           document.getElementById("sidebar").classList.add("collapsed");
         }
       });
-
-      function abrirModalNovoCliente() {
-        alert(
-          "Aqui abrirá o modal de cadastro de novo cliente (integrado futuramente com validação de CNPJ automática).",
-        );
-      }
     </script>
   </body>
 </html>
