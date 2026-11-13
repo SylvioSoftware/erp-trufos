@@ -198,12 +198,9 @@
         <table class="tabela-dados">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Razão Social / Nome Fantasia</th>
-              <th>CNPJ</th>
+              <th>Cliente</th>
               <th>Cidade / UF</th>
-              <th>Prazo (Meses)</th>
-              <th>Ações Operacionais (Hub)</th>
+              <th style="width: 240px">Ações Operacionais (Hub)</th>
             </tr>
           </thead>
           <tbody id="listaClientesTabela">
@@ -223,7 +220,7 @@
             margin-bottom: 25px;
           "
         >
-          Novo Cliente / Hospital
+          Novo Cliente
         </h2>
 
         <form id="formCliente" onsubmit="salvarCliente(event)">
@@ -309,7 +306,9 @@
                 type="text"
                 id="cep"
                 placeholder="00000-000"
+                maxlength="9"
                 class="form-input"
+                oninput="mascaraCEP(this)"
               />
             </div>
             <div style="grid-column: span 2">
