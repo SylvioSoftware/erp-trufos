@@ -16,6 +16,8 @@ import {
   fecharModalContatos,
   salvarContato,
   excluirContato,
+  mascaraTelefone,
+  preencherEdicaoContato,
 } from "./clientes-contatos.js";
 
 export async function carregarClientes() {
@@ -86,6 +88,8 @@ window.verContatos = verContatos;
 window.fecharModalContatos = fecharModalContatos;
 window.salvarContato = salvarContato;
 window.excluirContato = excluirContato;
+window.mascaraTelefone = mascaraTelefone;
+window.preencherEdicaoContato = preencherEdicaoContato;
 
 window.verEquipamentos = (id) => {
   window.location.href = `equipamentos.html?cliente_id=${id}`;

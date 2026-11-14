@@ -91,10 +91,28 @@ export async function consultarCNPJ(cnpj) {
       configurarBotaoContatos(false, null);
     }
 
-    preencherCamposFormulario(dadosRetorno?.cliente || {});
+    const c = dadosRetorno?.cliente || dadosRetorno || {};
+    document.getElementById("razao_social").value = c.razao_social || "";
+    document.getElementById("nome_fantasia").value = c.nome_fantasia || "";
+    document.getElementById("inscricao_estadual").value =
+      c.inscricao_estadual || "";
+    document.getElementById("inscricao_municipal").value =
+      c.inscricao_municipal || "";
+    document.getElementById("cep").value = c.cep || "";
+    document.getElementById("logradouro").value = c.logradouro || "";
+    document.getElementById("numero").value = c.numero || "";
+    document.getElementById("complemento").value = c.complemento || "";
+    document.getElementById("bairro").value = c.bairro || "";
+    document.getElementById("cidade").value = c.cidade || "";
+    document.getElementById("uf").value = c.uf || c.estado || "";
+
+    if (c.prazo_manutencao) {
+      document.getElementById("prazo_manutencao").value = c.prazo_manutencao;
+    }
   } catch (error) {
-    console.error("Erro ao consultar CNPJ:", error);
-    statusEl.innerHTML = "⚠️ Erro ao consultar o CNPJ.";
+    console.error("Erro detalhado na consulta CNPJ:", error);
+    statusEl.innerHTML =
+      "⚠️ Erro ao consultar o CNPJ (Verifique o console F12).";
     statusEl.style.color = "#dc2626";
     configurarBotaoContatos(false, null);
   }
