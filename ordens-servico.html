@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Ordens de Serviço</title>
+    <link rel="stylesheet" href="css/base.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="sidebar-brand">Trufos ERP</div>
+      <ul class="sidebar-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li>
+          <a href="ordens-servico.html" class="active">Ordens de Serviço</a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Gestão de Ordem de Serviço</h1>
+      </header>
+
+      <div
+        class="os-container"
+        style="
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          gap: 20px;
+          margin-top: 20px;
+        "
+      >
+        <!-- Abas de Navegação da OS -->
+        <div class="os-tabs">
+          <button
+            type="button"
+            class="tab-btn active"
+            data-target="aba-cliente"
+          >
+            1 - Cliente
+          </button>
+          <button type="button" class="tab-btn" data-target="aba-equipamento">
+            2 - Equipamento
+          </button>
+          <button type="button" class="tab-btn" data-target="aba-laudo">
+            3 - Laudo & IA
+          </button>
+          <button type="button" class="tab-btn" data-target="aba-financeiro">
+            4 - Produtos e Valores
+          </button>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div class="os-form-content card">
+          <form id="form-os">
+            <!-- Aba 1: Cliente -->
+            <div id="aba-cliente" class="tab-pane active">
+              <h3>Dados do Cliente (Snapshot)</h3>
+              <div class="form-group">
+                <label>Selecionar Cliente *</label>
+                <select id="os-cliente-id" class="form-control" required>
+                  <option value="">Selecione um cliente...</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Razão Social</label>
+                  <input
+                    type="text"
+                    id="os-razao-social"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="form-group">
+                  <label>CNPJ / CPF</label>
+                  <input
+                    type="text"
+                    id="os-cnpj"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Aba 2: Equipamento -->
+            <div id="aba-equipamento" class="tab-pane" style="display: none">
+              <h3>Equipamento / Modelo</h3>
+              <div class="form-group">
+                <label>Vincular Equipamento Cadastrado</label>
+                <select id="os-equipamento-id" class="form-control">
+                  <option value="">Selecione o equipamento...</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <input type="text" id="os-equip-tipo" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label>Fabricante / Marca</label>
+                  <input
+                    type="text"
+                    id="os-equip-fabricante"
+                    class="form-control"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Modelo</label>
+                  <input
+                    type="text"
+                    id="os-equip-modelo"
+                    class="form-control"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Nº de Série</label>
+                  <input type="text" id="os-equip-serie" class="form-control" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Aba 3: Laudo Técnico -->
+            <div id="aba-laudo" class="tab-pane" style="display: none">
+              <h3>Laudo Técnico e Diagnóstico (Pronto para IA)</h3>
+              <div class="form-group">
+                <label>Descrição do Defeito / Reclamação</label>
+                <textarea
+                  id="os-defeito"
+                  class="form-control"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label>Laudo Técnico Executado</label>
+                <textarea
+                  id="os-laudo"
+                  class="form-control"
+                  rows="5"
+                  placeholder="Insira o laudo técnico ou utilize o suporte da IA..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Aba 4: Financeiro / Itens -->
+            <div id="aba-financeiro" class="tab-pane" style="display: none">
+              <h3>Valores e Totais</h3>
+              <div class="form-group">
+                <label>Valor Total da OS (R$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="os-valor-total"
+                  class="form-control"
+                  value="0.00"
+                />
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 20px">
+              <button type="submit" class="btn-primary">
+                Salvar Ordem de Serviço
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="js/ordens-servico/ordens-main.js"></script>
+  </body>
+</html>

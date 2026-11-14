@@ -136,3 +136,38 @@ header.header-erp {
 .sidebar.collapsed ~ .main-content {
   margin-left: 70px;
 }
+
+/* --- RESPONSIVIDADE E MENU HAMBÚRGUER --- */
+@media (max-width: 768px) {
+  body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr;
+  }
+
+  /* Esconde o menu lateral por padrão no mobile */
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    width: 260px;
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  /* Classe para abrir o menu via JS */
+  .sidebar.ativo {
+    left: 0;
+  }
+
+  /* Ajusta o conteúdo principal para ocupar a tela toda */
+  .main-content {
+    padding: 15px;
+    width: 100%;
+  }
+
+  /* Torna os formulários em coluna única no celular */
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+}
