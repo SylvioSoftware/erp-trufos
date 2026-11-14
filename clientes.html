@@ -4,141 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trufos ERP - Gestão de Clientes</title>
-    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
     <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
-    <script src="js/auth.js"></script>
-    <style>
-      .page-header-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 15px;
-        margin-bottom: 20px;
-      }
-      .btn-principal {
-        background: var(--azul-trufos);
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: background 0.2s;
-      }
-      .btn-principal:hover {
-        background: #0056b3;
-      }
-
-      .card-tabela {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e1e4e8;
-        overflow: hidden;
-        padding: 20px;
-      }
-      .tabela-dados {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.9em;
-      }
-      .tabela-dados th,
-      .tabela-dados td {
-        padding: 12px 10px;
-        text-align: left;
-        border-bottom: 1px solid #edf2f7;
-      }
-      .tabela-dados th {
-        background: #f8f9fa;
-        color: #475569;
-        font-weight: 600;
-      }
-      .tabela-dados tr:hover {
-        background: #f0f7ff;
-      }
-
-      .btn-acao {
-        background: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        padding: 6px 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-right: 3px;
-        font-size: 0.85em;
-        transition: background 0.2s;
-      }
-      .btn-acao:hover {
-        background: #e2e8f0;
-      }
-
-      /* Estilização otimizada para o Modal */
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-      .modal-card {
-        background: white;
-        padding: 35px;
-        border-radius: 10px;
-        width: 750px;
-        max-width: 95%;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      }
-      .form-group {
-        margin-bottom: 18px;
-      }
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 18px;
-      }
-      .form-row-3 {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 18px;
-      }
-      .form-row-4 {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 18px;
-      }
-      .form-label {
-        display: block;
-        font-weight: 600;
-        font-size: 0.85em;
-        color: #334155;
-        margin-bottom: 6px;
-      }
-      .form-input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        font-size: 0.95em;
-        box-sizing: border-box;
-      }
-      .form-input:focus {
-        border-color: var(--azul-trufos);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
-      }
-    </style>
+    <script src="js/core/auth.js"></script>
   </head>
   <body>
     <!-- NAV LATERAL RETRÁTIL -->
@@ -167,9 +37,7 @@
         </a>
       </div>
 
-      <button class="sidebar-toggle" onclick="toggleSidebar()">
-        <i>≡</i>
-      </button>
+      <button class="sidebar-toggle"><i>≡</i></button>
     </nav>
 
     <!-- CONTEÚDO PRINCIPAL -->
@@ -203,17 +71,16 @@
               <th style="width: 240px">Ações Operacionais (Hub)</th>
             </tr>
           </thead>
-          <tbody id="listaClientesTabela">
-            <!-- Dados injetados dinamicamente via js/clientes.js -->
-          </tbody>
+          <tbody id="listaClientesTabela"></tbody>
         </table>
       </div>
     </main>
 
-    <!-- MODAL DE NOVO CLIENTE -->
+    <!-- MODAL DE CLIENTE (NOVO / EDIÇÃO) -->
     <div id="modalCliente" class="modal-overlay">
       <div class="modal-card">
         <h2
+          id="tituloModalCliente"
           style="
             margin-top: 0;
             color: var(--azul-logo-trufos);
@@ -226,7 +93,6 @@
         <form id="formCliente" onsubmit="salvarCliente(event)">
           <input type="hidden" id="clienteIdEdicao" />
 
-          <!-- CNPJ -->
           <div class="form-group">
             <label class="form-label">CNPJ *</label>
             <div style="display: flex; gap: 10px">
@@ -264,7 +130,6 @@
             ></small>
           </div>
 
-          <!-- RAZÃO SOCIAL E FANTASIA -->
           <div class="form-row">
             <div>
               <label class="form-label">Razão Social *</label>
@@ -281,7 +146,6 @@
             </div>
           </div>
 
-          <!-- INSCRIÇÕES FISCAIS -->
           <div class="form-row">
             <div>
               <label class="form-label">Inscrição Estadual (IE)</label>
@@ -298,7 +162,6 @@
             </div>
           </div>
 
-          <!-- ENDEREÇO (CEP, LOGRADOURO, NÚMERO, COMPLEMENTO) -->
           <div class="form-row-4">
             <div>
               <label class="form-label">CEP</label>
@@ -355,7 +218,6 @@
             </div>
           </div>
 
-          <!-- PRAZO PADRÃO -->
           <div class="form-group">
             <label class="form-label"
               >Prazo Padrão de Manutenção Preventiva (Meses)</label
@@ -370,7 +232,6 @@
             />
           </div>
 
-          <!-- RODAPÉ COM BOTÕES -->
           <div
             style="
               display: flex;
@@ -436,22 +297,123 @@
       </div>
     </div>
 
-    <script src="js/clientes.js"></script>
-    <script>
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        sidebar.classList.toggle("collapsed");
-        localStorage.setItem(
-          "sidebar_collapsed",
-          sidebar.classList.contains("collapsed"),
-        );
-      }
+    <!-- MODAL DE CONTATOS DO CLIENTE (SOBREPOSTO) -->
+    <div id="modalContatos" class="modal-overlay modal-sobreposto">
+      <div class="modal-card">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <h2 style="margin: 0; color: var(--azul-logo-trufos); border: none">
+            👥 Contatos / Pessoas
+          </h2>
+          <button
+            type="button"
+            onclick="fecharModalContatos()"
+            style="
+              background: none;
+              border: none;
+              font-size: 20px;
+              cursor: pointer;
+            "
+          >
+            ✖
+          </button>
+        </div>
 
-      window.addEventListener("DOMContentLoaded", () => {
-        if (localStorage.getItem("sidebar_collapsed") === "true") {
-          document.getElementById("sidebar").classList.add("collapsed");
-        }
-      });
-    </script>
+        <input type="hidden" id="contato_cliente_id" />
+
+        <div
+          style="
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+          "
+        >
+          <div class="form-row" style="margin-bottom: 10px">
+            <div>
+              <label class="form-label">Nome *</label>
+              <input
+                type="text"
+                id="contato_nome"
+                placeholder="Ex: Dra. Ana / Eng. Carlos"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Departamento / Cargo</label>
+              <input
+                type="text"
+                id="contato_departamento"
+                placeholder="Ex: CME, Engenharia, Compras"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1.5fr auto;
+              gap: 10px;
+              align-items: end;
+            "
+          >
+            <div>
+              <label class="form-label">Telefone / WhatsApp</label>
+              <input
+                type="text"
+                id="contato_telefone"
+                placeholder="(51) 99999-9999"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">E-mail</label>
+              <input
+                type="email"
+                id="contato_email"
+                placeholder="contato@clinica.com.br"
+                class="form-input"
+              />
+            </div>
+            <button
+              type="button"
+              onclick="salvarContato()"
+              class="btn-principal"
+            >
+              + Adicionar
+            </button>
+          </div>
+        </div>
+
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Setor</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+              <th style="text-align: center">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="listaContatosTabela">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 15px">
+                Carregando...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script type="module" src="js/clientes/clientes-main.js"></script>
   </body>
 </html>

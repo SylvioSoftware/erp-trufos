@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trufos ERP - Painel de Controle</title>
-    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
     <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
-    <script src="js/auth.js"></script>
+    <script src="js/core/auth.js"></script>
   </head>
   <body>
-    <!-- NAV LATERAL RETRÁTIL (DESKTOP) -->
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-header" style="padding: 15px; text-align: center">
         <img
@@ -33,7 +33,6 @@
         <a href="equipamentos.html" class="menu-item">
           <i>🔬</i> <span class="menu-text">Equipamentos</span>
         </a>
-        <!-- ESQUELETO VISUAL: Módulo futuro de Chat WhatsApp -->
         <a
           href="#"
           class="menu-item"
@@ -45,8 +44,8 @@
           "
         >
           <i>💬</i>
-          <span class="menu-text"
-            >Atendimento WA
+          <span class="menu-text">
+            Atendimento WA
             <small
               style="
                 font-size: 0.7em;
@@ -55,25 +54,22 @@
                 border-radius: 4px;
                 margin-left: 4px;
               "
-              >Em breve</small
-            ></span
-          >
+            >
+              Em breve
+            </small>
+          </span>
         </a>
       </div>
 
-      <button class="sidebar-toggle" onclick="toggleSidebar()">
-        <i>≡</i>
-      </button>
+      <button class="sidebar-toggle"><i>≡</i></button>
     </nav>
 
-    <!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
     <main class="main-content">
       <header class="header-erp">
         <div class="header-text-erp">
           <h1>Painel de Gestão Operacional</h1>
           <p>Resumo proativo de manutenções, chamados e fluxo de OS</p>
         </div>
-        <!-- ESQUELETO VISUAL: Status das automações futuras (WhatsApp / IA) -->
         <div
           style="
             background: #f1f5f9;
@@ -91,7 +87,6 @@
       </header>
 
       <div class="dashboard-grid">
-        <!-- CARD 1: PRÓXIMAS MANUTENÇÕES PREVISTAS -->
         <div class="dash-card">
           <div class="dash-card-header">
             <h2>📅 Próximas Manutenções</h2>
@@ -114,29 +109,11 @@
                   <th>Vencimento</th>
                 </tr>
               </thead>
-              <tbody id="listaManutencoes">
-                <tr class="clicavel">
-                  <td>Hospital São Lucas</td>
-                  <td>Autoclave Sercon 100L</td>
-                  <td>
-                    <span class="badge-status badge-vencido"
-                      >Vencido (10/11)</span
-                    >
-                  </td>
-                </tr>
-                <tr class="clicavel">
-                  <td>Clínica Balestro</td>
-                  <td>Lavadora Ultrassônica</td>
-                  <td>
-                    <span class="badge-status badge-alerta">Em 5 dias</span>
-                  </td>
-                </tr>
-              </tbody>
+              <tbody id="listaManutencoes"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- CARD 2: ORDENS DE SERVIÇO EM ANDAMENTO / ABERTO -->
         <div class="dash-card">
           <div class="dash-card-header">
             <h2>🛠️ Ordens de Serviço (Fila)</h2>
@@ -159,37 +136,11 @@
                   <th>Fase</th>
                 </tr>
               </thead>
-              <tbody id="listaOsAberto">
-                <tr class="clicavel">
-                  <td><strong>#1042</strong></td>
-                  <td>
-                    Clínica Balestro<br /><small style="color: #666"
-                      >Termoacumulador</small
-                    >
-                  </td>
-                  <td>
-                    <span class="badge-status status-avaliacao">Avaliação</span>
-                  </td>
-                </tr>
-                <tr class="clicavel">
-                  <td><strong>#1045</strong></td>
-                  <td>
-                    Hospital Regina<br /><small style="color: #666"
-                      >Autoclave Tuttnauer</small
-                    >
-                  </td>
-                  <td>
-                    <span class="badge-status status-andamento"
-                      >Em Andamento</span
-                    >
-                  </td>
-                </tr>
-              </tbody>
+              <tbody id="listaOsAberto"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- CARD 3: ORÇAMENTOS PENDENTES (+ ESQUELETO DE FOLLOW-UP) -->
         <div class="dash-card">
           <div class="dash-card-header">
             <h2>📄 Orçamentos Pendentes</h2>
@@ -212,31 +163,9 @@
                   <th>Ações</th>
                 </tr>
               </thead>
-              <tbody id="listaOrcamentos">
-                <tr>
-                  <td><strong>#1040</strong><br /><small>10/11/2026</small></td>
-                  <td>Hospital Moinhos</td>
-                  <td>
-                    <button
-                      class="btn-acao"
-                      title="Aprovar Orçamento"
-                      onclick="aprovarOrcamento(1040)"
-                    >
-                      ✅
-                    </button>
-                    <button
-                      class="btn-acao"
-                      title="Cancelar"
-                      onclick="cancelarOrcamento(1040)"
-                    >
-                      ❌
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
+              <tbody id="listaOrcamentos"></tbody>
             </table>
 
-            <!-- ESQUELETO VISUAL: Lembrete de Follow-up Futuro -->
             <div
               style="
                 margin-top: 15px;
@@ -261,43 +190,6 @@
       </div>
     </main>
 
-    <script>
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        sidebar.classList.toggle("collapsed");
-        localStorage.setItem(
-          "sidebar_collapsed",
-          sidebar.classList.contains("collapsed"),
-        );
-      }
-
-      window.addEventListener("DOMContentLoaded", () => {
-        if (localStorage.getItem("sidebar_collapsed") === "true") {
-          document.getElementById("sidebar").classList.add("collapsed");
-        }
-      });
-
-      function aprovarOrcamento(osId) {
-        if (
-          confirm(
-            `Deseja aprovar o orçamento da OS #${osId}? Ela passará para execução.`,
-          )
-        ) {
-          alert(`OS #${osId} aprovada com sucesso!`);
-          location.reload();
-        }
-      }
-
-      function cancelarOrcamento(osId) {
-        const motivo = prompt(
-          `Informe o motivo do cancelamento da OS #${osId}:`,
-        );
-        if (motivo && motivo.trim() !== "") {
-          alert(`OS #${osId} cancelada. Motivo: ${motivo}`);
-          location.reload();
-        }
-      }
-    </script>
-    <script src="js/dashboard.js"></script>
+    <script type="module" src="js/dashboard/dashboard.js"></script>
   </body>
 </html>

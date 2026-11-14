@@ -1,0 +1,76 @@
+/* ==========================================================================
+   TELA DE LOGIN (ACESSO RESTRITO)
+   ========================================================================== */
+body.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f4f6f9;
+}
+
+.login-card {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  border-top: 4px solid var(--azul-trufos);
+}
+
+.login-card img {
+  height: 50px;
+  margin-bottom: 15px;
+}
+
+.login-card h2 {
+  font-size: 1.2em;
+  color: var(--azul-logo-trufos);
+  margin-bottom: 10px;
+  border: none;
+}
+
+.login-card p {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.input-code {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.4em;
+  text-align: center;
+  letter-spacing: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.btn-entrar {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--azul-trufos);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-entrar:hover {
+  background-color: var(--azul-logo-trufos);
+}
+
+.status-envio {
+  font-size: 0.8em;
+  color: #008000;
+  margin-top: 10px;
+}

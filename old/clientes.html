@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Gestão de Clientes</title>
+    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/auth.js"></script>
+    <style>
+      .page-header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        margin-bottom: 20px;
+      }
+      .btn-principal {
+        background: var(--azul-trufos);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+      }
+      .btn-principal:hover {
+        background: #0056b3;
+      }
+
+      .card-tabela {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e1e4e8;
+        overflow: hidden;
+        padding: 20px;
+      }
+      .tabela-dados {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+      }
+      .tabela-dados th,
+      .tabela-dados td {
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 1px solid #edf2f7;
+      }
+      .tabela-dados th {
+        background: #f8f9fa;
+        color: #475569;
+        font-weight: 600;
+      }
+      .tabela-dados tr:hover {
+        background: #f0f7ff;
+      }
+
+      .btn-acao {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        padding: 6px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 3px;
+        font-size: 0.85em;
+        transition: background 0.2s;
+      }
+      .btn-acao:hover {
+        background: #e2e8f0;
+      }
+
+      /* Estilização otimizada para o Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal-card {
+        background: white;
+        padding: 35px;
+        border-radius: 10px;
+        width: 750px;
+        max-width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .form-row-3 {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 18px;
+      }
+      .form-row-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .form-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85em;
+        color: #334155;
+        margin-bottom: 6px;
+      }
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 0.95em;
+        box-sizing: border-box;
+      }
+      .form-input:focus {
+        border-color: var(--azul-trufos);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV LATERAL RETRÁTIL -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header" style="padding: 15px; text-align: center">
+        <img
+          src="img/logo.png"
+          alt="Trufos"
+          style="max-width: 140px; height: auto"
+          class="menu-text"
+        />
+      </div>
+
+      <div class="menu-links">
+        <a href="index.html" class="menu-item">
+          <i>🏠</i> <span class="menu-text">Painel Principal</span>
+        </a>
+        <a href="ordens-servico.html" class="menu-item">
+          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
+        </a>
+        <a href="clientes.html" class="menu-item active">
+          <i>👥</i> <span class="menu-text">Clientes</span>
+        </a>
+        <a href="equipamentos.html" class="menu-item">
+          <i>🔬</i> <span class="menu-text">Equipamentos</span>
+        </a>
+      </div>
+
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i>≡</i>
+      </button>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Clientes</h1>
+          <p>Gerenciamento de cadastros, endereços e prazos de manutenção</p>
+        </div>
+      </header>
+
+      <div class="page-header-actions">
+        <input
+          type="text"
+          id="filtroCliente"
+          placeholder="🔍 Buscar por nome, CNPJ ou cidade..."
+          class="form-input"
+          style="width: 320px"
+        />
+        <button class="btn-principal" onclick="abrirModalNovoCliente()">
+          + Novo Cliente
+        </button>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Cidade / UF</th>
+              <th style="width: 240px">Ações Operacionais (Hub)</th>
+            </tr>
+          </thead>
+          <tbody id="listaClientesTabela">
+            <!-- Dados injetados dinamicamente via js/clientes.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL DE NOVO CLIENTE -->
+    <div id="modalCliente" class="modal-overlay">
+      <div class="modal-card">
+        <h2
+          style="
+            margin-top: 0;
+            color: var(--azul-logo-trufos);
+            margin-bottom: 25px;
+          "
+        >
+          Novo Cliente
+        </h2>
+
+        <form id="formCliente" onsubmit="salvarCliente(event)">
+          <input type="hidden" id="clienteIdEdicao" />
+
+          <!-- CNPJ -->
+          <div class="form-group">
+            <label class="form-label">CNPJ *</label>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                id="cnpj"
+                placeholder="00.000.000/0001-00"
+                required
+                class="form-input"
+                onblur="consultarCNPJ(this.value)"
+              />
+              <button
+                type="button"
+                onclick="consultarCNPJ(document.getElementById('cnpj').value)"
+                style="
+                  background: #e2e8f0;
+                  border: 1px solid #cbd5e1;
+                  padding: 0 18px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                🔍 Buscar
+              </button>
+            </div>
+            <small
+              id="statusCnpj"
+              style="
+                color: #64748b;
+                font-size: 0.8em;
+                margin-top: 4px;
+                display: block;
+              "
+            ></small>
+          </div>
+
+          <!-- RAZÃO SOCIAL E FANTASIA -->
+          <div class="form-row">
+            <div>
+              <label class="form-label">Razão Social *</label>
+              <input
+                type="text"
+                id="razao_social"
+                required
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Nome Fantasia</label>
+              <input type="text" id="nome_fantasia" class="form-input" />
+            </div>
+          </div>
+
+          <!-- INSCRIÇÕES FISCAIS -->
+          <div class="form-row">
+            <div>
+              <label class="form-label">Inscrição Estadual (IE)</label>
+              <input
+                type="text"
+                id="inscricao_estadual"
+                class="form-input"
+                placeholder="Isento ou número"
+              />
+            </div>
+            <div>
+              <label class="form-label">Inscrição Municipal (IM)</label>
+              <input type="text" id="inscricao_municipal" class="form-input" />
+            </div>
+          </div>
+
+          <!-- ENDEREÇO (CEP, LOGRADOURO, NÚMERO, COMPLEMENTO) -->
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">CEP</label>
+              <input
+                type="text"
+                id="cep"
+                placeholder="00000-000"
+                maxlength="9"
+                class="form-input"
+                oninput="mascaraCEP(this)"
+              />
+            </div>
+            <div style="grid-column: span 2">
+              <label class="form-label">Logradouro / Endereço</label>
+              <input
+                type="text"
+                id="logradouro"
+                placeholder="Ex: Av. Ipiranga"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Número</label>
+              <input
+                type="text"
+                id="numero"
+                placeholder="Nº"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">Complemento</label>
+              <input
+                type="text"
+                id="complemento"
+                placeholder="Sala, Bloco..."
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Bairro</label>
+              <input type="text" id="bairro" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">Cidade</label>
+              <input type="text" id="cidade" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">UF</label>
+              <input type="text" id="uf" class="form-input" maxlength="2" />
+            </div>
+          </div>
+
+          <!-- PRAZO PADRÃO -->
+          <div class="form-group">
+            <label class="form-label"
+              >Prazo Padrão de Manutenção Preventiva (Meses)</label
+            >
+            <input
+              type="number"
+              id="prazo_manutencao"
+              value="12"
+              min="1"
+              max="60"
+              class="form-input"
+            />
+          </div>
+
+          <!-- RODAPÉ COM BOTÕES -->
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 25px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 20px;
+            "
+          >
+            <button
+              type="button"
+              id="btnModalContatos"
+              style="
+                background: #f1f5f9;
+                color: #94a3b8;
+                border: 1px solid #cbd5e1;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: not-allowed;
+                font-weight: 600;
+                opacity: 0.6;
+                transition: all 0.2s;
+              "
+              disabled
+              onclick="abrirContatosClienteAtual()"
+            >
+              👥 Contatos / Pessoas
+            </button>
+
+            <div style="display: flex; gap: 10px">
+              <button
+                type="button"
+                onclick="fecharModalCliente()"
+                style="
+                  background: #e2e8f0;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                style="
+                  background: var(--azul-trufos);
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Salvar Cliente
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de Contatos do Cliente -->
+<div id="modalContatos" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 750px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="margin: 0; color: #1e3a8a;">👥 Contatos / Pessoas</h2>
+      <button onclick="fecharModalContatos()" style="background: none; border: none; font-size: 20px; cursor: pointer;">✖</button>
+    </div>
+
+    <input type="hidden" id="contato_cliente_id">
+
+    <!-- Formulário rápido para adicionar contato -->
+    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+      <div style="display: grid; grid-template-columns: 2fr 1.5fr; gap: 10px; margin-bottom: 10px;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600;">Nome *</label>
+          <input type="text" id="contato_nome" placeholder="Ex: Dra. Ana / Eng. Carlos" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600;">Departamento / Cargo</label>
+          <input type="text" id="contato_departamento" placeholder="Ex: CME, Engenharia, Compras" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 10px; align-items: end;">
+        <div>
+          <label style="font-size: 12px; font-weight: 600;">Telefone / WhatsApp</label>
+          <input type="text" id="contato_telefone" placeholder="(51) 99999-9999" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+        <div>
+          <label style="font-size: 12px; font-weight: 600;">E-mail</label>
+          <input type="email" id="contato_email" placeholder="contato@clinica.com.br" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+        <button onclick="salvarContato()" style="background: #2563eb; color: white; border: none; padding: 9px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+          + Adicionar
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela de contatos cadastrados -->
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead>
+        <tr style="background: #f1f5f9; text-align: left; border-bottom: 2px solid #cbd5e1;">
+          <th style="padding: 10px;">Nome</th>
+          <th style="padding: 10px;">Setor</th>
+          <th style="padding: 10px;">Telefone</th>
+          <th style="padding: 10px;">E-mail</th>
+          <th style="padding: 10px; text-align: center;">Ação</th>
+        </tr>
+      </thead>
+      <tbody id="listaContatosTabela">
+        <tr><td colspan="5" style="text-align: center; padding: 15px;">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+    <script src="js/clientes.js"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+        localStorage.setItem(
+          "sidebar_collapsed",
+          sidebar.classList.contains("collapsed"),
+        );
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("sidebar_collapsed") === "true") {
+          document.getElementById("sidebar").classList.add("collapsed");
+        }
+      });
+    </script>
+  </body>
+</html>

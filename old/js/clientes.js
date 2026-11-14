@@ -6,7 +6,7 @@ window.addEventListener("DOMContentLoaded", () => {
   carregarClientes();
 });
 
-// Adiciona o evento de digitação na barra de busca
+// Adiciona o evento de digitação na barra de busca (pesquisa por qualquer campo/endereço)
 document.addEventListener("DOMContentLoaded", () => {
   const inputBusca = document.querySelector("input[placeholder*='Buscar']");
   if (inputBusca) {
@@ -56,7 +56,6 @@ async function carregarClientes() {
       tbody.innerHTML = dados
         .map((c) => {
           const cnpjLimpo = (c.cnpj || "").replace(/\D/g, "");
-          // Incluindo logradouro, bairro, complemento e todos os dados na string de busca
           const termoBusca =
             `${c.nome_fantasia || ""} ${c.razao_social || ""} ${c.cnpj || ""} ${c.logradouro || ""} ${c.bairro || ""} ${c.cidade || ""} ${c.uf || ""}`.toLowerCase();
 
@@ -80,7 +79,7 @@ async function carregarClientes() {
         })
         .join("");
     } else {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #666;">Nenhum cliente cadastrado.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #666;">Nenhum cliente cadastrado.</td></tr>`;
     }
   } catch (error) {
     console.error("Erro ao carregar clientes:", error);
@@ -201,13 +200,11 @@ async function editarCliente(id) {
       "✏️ Carregando dados para edição...";
     document.getElementById("statusCnpj").style.color = "#2563eb";
 
-    // 1. URL corrigida para 'cliente-busca' (sem o 'r')
     const response = await fetch(
       `https://n8n.trufos.com.br/webhook/cliente-busca?id=${id}`,
     );
     const resultado = await response.json();
 
-    // 2. Extrai o objeto cliente corretamente, seja ele array ou objeto direto
     const dadosRetorno = Array.isArray(resultado) ? resultado[0] : resultado;
     const c = dadosRetorno?.cliente || dadosRetorno || {};
 
@@ -225,7 +222,7 @@ async function editarCliente(id) {
     document.getElementById("complemento").value = c.complemento || "";
     document.getElementById("bairro").value = c.bairro || "";
     document.getElementById("cidade").value = c.cidade || "";
-    document.getElementById("uf").value = c.uf || c.uf || "";
+    document.getElementById("uf").value = c.uf || c.estado || "";
     document.getElementById("prazo_manutencao").value =
       c.prazo_manutencao || 12;
 
@@ -247,16 +244,13 @@ function abrirContatosClienteAtual() {
   }
 }
 
+// Atalhos operacionais do Hub
 function verEquipamentos(id) {
   window.location.href = `equipamentos.html?cliente_id=${id}`;
 }
 
 function verOrdensServico(id) {
   alert(`Abrir Ordens de Serviço do cliente ID: ${id}`);
-}
-
-function verContatos(id) {
-  alert(`Abrir Gestão de Contatos/Pessoas do cliente ID: ${id}`);
 }
 
 function verConversasWA(id) {
@@ -268,9 +262,114 @@ function verClockifyCliente(id) {
 }
 
 function mascaraCEP(input) {
-  let v = input.value.replace(/\D/g, ""); // Remove tudo o que não é dígito
+  let v = input.value.replace(/\D/g, "");
   if (v.length > 5) {
     v = v.substring(0, 5) + "-" + v.substring(5, 9);
   }
   input.value = v;
+}
+
+// ==========================================
+// GESTÃO DE CONTATOS / PESSOAS
+// ==========================================
+
+function verContatos(clienteId) {
+  if (!clienteId) {
+    alert("ID do cliente não identificado.");
+    return;
+  }
+  document.getElementById("contato_cliente_id").value = clienteId;
+  document.getElementById("modalContatos").style.display = "flex";
+  carregarContatos(clienteId);
+}
+
+function fecharModalContatos() {
+  document.getElementById("modalContatos").style.display = "none";
+}
+
+async function carregarContatos(clienteId) {
+  const tbody = document.getElementById("listaContatosTabela");
+  tbody.innerHTML =
+    '<tr><td colspan="5" style="text-align: center; padding: 15px;">Buscando contatos...</td></tr>';
+
+  try {
+    const response = await fetch(
+      `https://n8n.trufos.com.br/webhook/contatos-listar?cliente_id=${clienteId}`,
+    );
+    const dados = await response.json();
+    const lista = Array.isArray(dados) ? dados : dados.data || [];
+
+    if (lista.length > 0 && lista[0].id) {
+      tbody.innerHTML = lista
+        .map(
+          (c) => `
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+          <td style="padding: 10px;"><strong>${c.nome}</strong></td>
+          <td style="padding: 10px;">${c.departamento || "-"}</td>
+          <td style="padding: 10px;">${c.telefone || "-"}</td>
+          <td style="padding: 10px;">${c.email || "-"}</td>
+          <td style="padding: 10px; text-align: center;">
+            <button onclick="excluirContato(${c.id}, ${clienteId})" title="Remover" style="background: none; border: none; cursor: pointer; font-size: 16px;">🗑️</button>
+          </td>
+        </tr>
+      `,
+        )
+        .join("");
+    } else {
+      tbody.innerHTML =
+        '<tr><td colspan="5" style="text-align: center; padding: 15px; color: #64748b;">Nenhum contato cadastrado para este cliente.</td></tr>';
+    }
+  } catch (error) {
+    console.error("Erro ao carregar contatos:", error);
+    tbody.innerHTML =
+      '<tr><td colspan="5" style="text-align: center; padding: 15px; color: #dc2626;">Erro ao carregar lista.</td></tr>';
+  }
+}
+
+async function salvarContato() {
+  const clienteId = document.getElementById("contato_cliente_id").value;
+  const nome = document.getElementById("contato_nome").value.trim();
+
+  if (!nome) {
+    alert("Informe o nome do contato.");
+    return;
+  }
+
+  const payload = {
+    cliente_id: parseInt(clienteId),
+    nome: nome,
+    departamento: document.getElementById("contato_departamento").value.trim(),
+    telefone: document.getElementById("contato_telefone").value.trim(),
+    email: document.getElementById("contato_email").value.trim(),
+  };
+
+  try {
+    await fetch("https://n8n.trufos.com.br/webhook/contato-salvar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    document.getElementById("contato_nome").value = "";
+    document.getElementById("contato_departamento").value = "";
+    document.getElementById("contato_telefone").value = "";
+    document.getElementById("contato_email").value = "";
+    carregarContatos(clienteId);
+  } catch (error) {
+    console.error("Erro ao salvar contato:", error);
+    alert("Erro ao salvar contato.");
+  }
+}
+
+async function excluirContato(id, clienteId) {
+  if (!confirm("Remover este contato?")) return;
+
+  try {
+    await fetch(`https://n8n.trufos.com.br/webhook/contato-excluir?id=${id}`, {
+      method: "DELETE",
+    });
+    carregarContatos(clienteId);
+  } catch (error) {
+    console.error("Erro ao excluir contato:", error);
+  }
 }

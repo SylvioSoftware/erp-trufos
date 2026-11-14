@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Acesso Restrito</title>
+    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f6f9;
+      }
+      .login-card {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 380px;
+        text-align: center;
+        border-top: 4px solid var(--azul-trufos);
+      }
+      .login-card img {
+        height: 50px;
+        margin-bottom: 15px;
+      }
+      .login-card h2 {
+        font-size: 1.2em;
+        color: var(--azul-logo-trufos);
+        margin-bottom: 10px;
+      }
+      .login-card p {
+        font-size: 0.85em;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      .input-code {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.4em;
+        text-align: center;
+        letter-spacing: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+      }
+      .btn-entrar {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--azul-trufos);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-entrar:hover {
+        background-color: var(--azul-logo-trufos);
+      }
+      .status-envio {
+        font-size: 0.8em;
+        color: #008000;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <img src="img/logo.png" alt="Logo Trufos" />
+      <h2>Acesso Restrito</h2>
+      <p>
+        Um código de verificação foi enviado automaticamente para o seu
+        WhatsApp.
+      </p>
+
+      <input
+        type="text"
+        id="codigoInput"
+        class="input-code"
+        maxlength="6"
+        placeholder="------"
+      />
+      <button onclick="validarCodigo()" class="btn-entrar">
+        Entrar no Sistema
+      </button>
+
+      <div id="statusEnvio" class="status-envio"></div>
+    </div>
+
+    <script>
+      const WEBHOOK_URL = "https://n8n.trufos.com.br/webhook/erp-gerar-codigo";
+      const TOKEN_KEY = "trufos_erp_auth";
+
+      window.addEventListener("DOMContentLoaded", () => {
+        solicitarNovoCodigo();
+      });
+
+      async function solicitarNovoCodigo() {
+        const statusEl = document.getElementById("statusEnvio");
+        statusEl.style.color = "#008000";
+        statusEl.innerText = "A solicitar código via WhatsApp...";
+
+        try {
+          const response = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ acao: "gerar_codigo" }),
+          });
+
+          if (response.ok) {
+            statusEl.innerText = "📲 Código enviado com sucesso!";
+          } else {
+            statusEl.style.color = "red";
+            statusEl.innerText = "Erro no servidor (" + response.status + ").";
+          }
+        } catch (error) {
+          console.error("Erro no fetch:", error);
+          statusEl.style.color = "red";
+          statusEl.innerText = "Erro de conexão / CORS com o n8n.";
+        }
+      }
+
+      function validarCodigo() {
+        const digitado = document.getElementById("codigoInput").value.trim();
+
+        if (digitado.length !== 6) {
+          alert("Por favor, digite o código completo de 6 dígitos.");
+          return;
+        }
+
+        // Grava a sessão válida por 24 horas (em milissegundos)
+        const sessao = {
+          authenticated: true,
+          expiresAt: new Date().getTime() + 24 * 60 * 60 * 1000,
+        };
+
+        localStorage.setItem(TOKEN_KEY, JSON.stringify(sessao));
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>

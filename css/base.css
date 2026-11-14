@@ -1,0 +1,138 @@
+/* ==========================================================================
+   BASE, VARIÁVEIS E LAYOUT PRINCIPAL DO ERP TRUFOS
+   ========================================================================== */
+:root {
+  --azul-logo-trufos: #2e3091;
+  --azul-trufos: #0056b3;
+  --azul-escuro: #004494;
+  --branco: #ffffff;
+  --fundo: #f9f9f9;
+  --meio-gradiente: #95c29d;
+  --borda-gradiente: #378d8e;
+}
+
+html {
+  height: 100%;
+  background: linear-gradient(
+      to right,
+      var(--borda-gradiente),
+      var(--meio-gradiente),
+      var(--borda-gradiente)
+    )
+    fixed;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+h1,
+h2 {
+  color: var(--azul-trufos);
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+h3 {
+  color: var(--azul-trufos);
+}
+
+/* Cabeçalho Compacto ERP */
+header.header-erp {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px 30px;
+  background: transparent;
+  border-bottom: 3px solid var(--azul-trufos);
+}
+
+.header-text-erp h1 {
+  font-size: 1.4em;
+  color: var(--azul-logo-trufos);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 0 0 2px 0;
+}
+
+.header-text-erp p {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--azul-trufos);
+  font-weight: bold;
+}
+
+/* Menu Lateral Retrátil */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: var(--azul-trufos);
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+
+.sidebar .menu-item:hover,
+.sidebar .menu-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar .menu-item i {
+  font-size: 1.2em;
+  min-width: 30px;
+  text-align: center;
+}
+
+.sidebar.collapsed .menu-text {
+  display: none;
+}
+
+.sidebar-toggle {
+  margin-top: auto;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.15);
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.1em;
+  transition: background 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.main-content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}

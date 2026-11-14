@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Painel de Controle</title>
+    <link rel="stylesheet" href="css/estilo.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/auth.js"></script>
+  </head>
+  <body>
+    <!-- NAV LATERAL RETRÁTIL (DESKTOP) -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header" style="padding: 15px; text-align: center">
+        <img
+          src="img/logo.png"
+          alt="Trufos"
+          style="max-width: 140px; height: auto"
+          class="menu-text"
+        />
+      </div>
+
+      <div class="menu-links">
+        <a href="index.html" class="menu-item active">
+          <i>🏠</i> <span class="menu-text">Painel Principal</span>
+        </a>
+        <a href="ordens-servico.html" class="menu-item">
+          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
+        </a>
+        <a href="clientes.html" class="menu-item">
+          <i>👥</i> <span class="menu-text">Clientes</span>
+        </a>
+        <a href="equipamentos.html" class="menu-item">
+          <i>🔬</i> <span class="menu-text">Equipamentos</span>
+        </a>
+        <!-- ESQUELETO VISUAL: Módulo futuro de Chat WhatsApp -->
+        <a
+          href="#"
+          class="menu-item"
+          style="opacity: 0.5; cursor: not-allowed"
+          title="Módulo em desenvolvimento (Fase 2)"
+          onclick="
+            alert('Módulo de Central WhatsApp / IA previsto para a Fase 2!');
+            return false;
+          "
+        >
+          <i>💬</i>
+          <span class="menu-text"
+            >Atendimento WA
+            <small
+              style="
+                font-size: 0.7em;
+                background: rgba(255, 255, 255, 0.2);
+                padding: 2px 5px;
+                border-radius: 4px;
+                margin-left: 4px;
+              "
+              >Em breve</small
+            ></span
+          >
+        </a>
+      </div>
+
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i>≡</i>
+      </button>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL DO DASHBOARD -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Painel de Gestão Operacional</h1>
+          <p>Resumo proativo de manutenções, chamados e fluxo de OS</p>
+        </div>
+        <!-- ESQUELETO VISUAL: Status das automações futuras (WhatsApp / IA) -->
+        <div
+          style="
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: #64748b;
+          "
+          title="Módulo futuro de atendimento automático via Evolution API e n8n"
+        >
+          🤖 Automação WhatsApp / IA:
+          <span style="color: #f59e0b; font-weight: bold">Em Espera (MVP)</span>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <!-- CARD 1: PRÓXIMAS MANUTENÇÕES PREVISTAS -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>📅 Próximas Manutenções</h2>
+            <a
+              href="equipamentos.html"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Ver todos</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Equipamento</th>
+                  <th>Vencimento</th>
+                </tr>
+              </thead>
+              <tbody id="listaManutencoes">
+                <tr class="clicavel">
+                  <td>Hospital São Lucas</td>
+                  <td>Autoclave Sercon 100L</td>
+                  <td>
+                    <span class="badge-status badge-vencido"
+                      >Vencido (10/11)</span
+                    >
+                  </td>
+                </tr>
+                <tr class="clicavel">
+                  <td>Clínica Balestro</td>
+                  <td>Lavadora Ultrassônica</td>
+                  <td>
+                    <span class="badge-status badge-alerta">Em 5 dias</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CARD 2: ORDENS DE SERVIÇO EM ANDAMENTO / ABERTO -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>🛠️ Ordens de Serviço (Fila)</h2>
+            <a
+              href="ordens-servico.html"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Gerenciar OS</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>OS</th>
+                  <th>Cliente / Aparelho</th>
+                  <th>Fase</th>
+                </tr>
+              </thead>
+              <tbody id="listaOsAberto">
+                <tr class="clicavel">
+                  <td><strong>#1042</strong></td>
+                  <td>
+                    Clínica Balestro<br /><small style="color: #666"
+                      >Termoacumulador</small
+                    >
+                  </td>
+                  <td>
+                    <span class="badge-status status-avaliacao">Avaliação</span>
+                  </td>
+                </tr>
+                <tr class="clicavel">
+                  <td><strong>#1045</strong></td>
+                  <td>
+                    Hospital Regina<br /><small style="color: #666"
+                      >Autoclave Tuttnauer</small
+                    >
+                  </td>
+                  <td>
+                    <span class="badge-status status-andamento"
+                      >Em Andamento</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CARD 3: ORÇAMENTOS PENDENTES (+ ESQUELETO DE FOLLOW-UP) -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h2>📄 Orçamentos Pendentes</h2>
+            <a
+              href="ordens-servico.html?filtro=orcamento"
+              style="
+                font-size: 0.8em;
+                color: var(--azul-trufos);
+                text-decoration: none;
+              "
+              >Ver todos</a
+            >
+          </div>
+          <div class="dash-card-body">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>OS / Data</th>
+                  <th>Cliente</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="listaOrcamentos">
+                <tr>
+                  <td><strong>#1040</strong><br /><small>10/11/2026</small></td>
+                  <td>Hospital Moinhos</td>
+                  <td>
+                    <button
+                      class="btn-acao"
+                      title="Aprovar Orçamento"
+                      onclick="aprovarOrcamento(1040)"
+                    >
+                      ✅
+                    </button>
+                    <button
+                      class="btn-acao"
+                      title="Cancelar"
+                      onclick="cancelarOrcamento(1040)"
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- ESQUELETO VISUAL: Lembrete de Follow-up Futuro -->
+            <div
+              style="
+                margin-top: 15px;
+                background: #fffbeb;
+                border: 1px solid #fde68a;
+                padding: 8px 10px;
+                border-radius: 6px;
+                font-size: 0.8em;
+                color: #92400e;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span
+                >⏳ <strong>Follow-up automático (48h):</strong> Em breve</span
+              >
+              <span style="font-size: 0.85em; opacity: 0.7">(IA WhatsApp)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+        localStorage.setItem(
+          "sidebar_collapsed",
+          sidebar.classList.contains("collapsed"),
+        );
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("sidebar_collapsed") === "true") {
+          document.getElementById("sidebar").classList.add("collapsed");
+        }
+      });
+
+      function aprovarOrcamento(osId) {
+        if (
+          confirm(
+            `Deseja aprovar o orçamento da OS #${osId}? Ela passará para execução.`,
+          )
+        ) {
+          alert(`OS #${osId} aprovada com sucesso!`);
+          location.reload();
+        }
+      }
+
+      function cancelarOrcamento(osId) {
+        const motivo = prompt(
+          `Informe o motivo do cancelamento da OS #${osId}:`,
+        );
+        if (motivo && motivo.trim() !== "") {
+          alert(`OS #${osId} cancelada. Motivo: ${motivo}`);
+          location.reload();
+        }
+      }
+    </script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
