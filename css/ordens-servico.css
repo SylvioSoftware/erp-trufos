@@ -1,0 +1,80 @@
+/* ==========================================================================
+   ESTILOS DA PÁGINA DE ORDENS DE SERVIÇO
+   ========================================================================== */
+
+.os-container {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Abas de Navegação (Menu Lateral Estilo Wizard) */
+.os-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.os-tabs .tab-btn {
+  width: 100%;
+  padding: 12px 15px;
+  text-align: left;
+  background-color: var(--branco, #ffffff);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: var(--azul-trufos, #0056b3);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.os-tabs .tab-btn:hover {
+  background-color: #f1f5f9;
+  border-color: var(--azul-trufos, #0056b3);
+}
+
+.os-tabs .tab-btn.active {
+  background-color: var(--azul-trufos, #0056b3);
+  color: var(--branco, #ffffff);
+  border-color: var(--azul-trufos, #0056b3);
+}
+
+/* Conteúdo do Formulário da OS */
+.os-form-content {
+  background: var(--branco, #ffffff);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* --- RESPONSIVIDADE MOBILE --- */
+@media (max-width: 768px) {
+  .os-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Transforma as abas em uma barra horizontal com scroll suave no celular */
+  .os-tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .os-tabs .tab-btn {
+    width: auto;
+    padding: 10px 14px;
+    font-size: 0.9em;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .os-form-content {
+    padding: 15px;
+  }
+}
