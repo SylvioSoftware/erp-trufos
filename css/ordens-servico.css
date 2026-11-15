@@ -78,3 +78,24 @@
     padding: 15px;
   }
 }
+/* Força a estrutura de formulário na OS a ter o label em cima e o input 100% embaixo */
+.os-form-content .form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  margin-bottom: 15px !important;
+}
+
+.os-form-content .form-group label {
+  margin-bottom: 5px !important;
+  font-weight: 600;
+  color: #333;
+  text-align: left !important;
+}
+
+.os-form-content .form-group .form-control,
+.os-form-content .form-group textarea {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
