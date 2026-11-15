@@ -82,7 +82,9 @@ header.header-erp {
   position: fixed;
   top: 0;
   left: 0;
-  transition: width 0.3s ease;
+  transition:
+    width 0.3s ease,
+    left 0.3s ease;
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -144,11 +146,48 @@ header.header-erp {
   margin-left: 70px;
 }
 
-/* --- RESPONSIVIDADE E MENU HAMBÚRGUER --- */
-* {
-  box-sizing: border-box;
+/* --- BOTÃO HAMBÚRGUER FLUTUANTE (MOBILE) --- */
+.mobile-menu-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1100;
+  background-color: var(--azul-trufos);
+  color: var(--branco);
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  font-size: 1.4em;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
 }
+
+/* --- OVERLAY DO MENU MOBILE --- */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1150;
+  display: none;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* --- RESPONSIVIDADE E MENU HAMBÚRGUER --- */
 @media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
   /* Esconde o menu lateral fora da tela por padrão no mobile */
   .sidebar {
     position: fixed;
@@ -156,14 +195,14 @@ header.header-erp {
     top: 0;
     width: 260px;
     height: 100vh;
-    z-index: 1000;
+    z-index: 1200;
     transition: left 0.3s ease;
-    padding-top: 50px;
   }
 
-  /* Classe para abrir o menu via JS */
+  /* Classes para abrir o menu via JS no mobile */
   .sidebar.ativo,
-  .sidebar.open {
+  .sidebar.open,
+  .sidebar.mobile-open {
     left: 0;
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
   }
@@ -174,26 +213,6 @@ header.header-erp {
 
   .sidebar.collapsed .menu-text {
     display: inline;
-  }
-
-  /* Descola o botão hambúrguer da sidebar escondida e fixa no topo */
-  .sidebar-toggle {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    margin-top: 0;
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--azul-trufos);
-    color: var(--branco);
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    z-index: 1100;
-    font-size: 1.4em;
   }
 
   /* Remove o espaço vazio à esquerda e ajusta o topo */
@@ -211,15 +230,7 @@ header.header-erp {
     gap: 10px;
   }
 
-  /* Adapta o cabeçalho para telas estreitas */
-  header.header-erp {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 5px 15px 5px;
-    gap: 10px;
-  }
-
-  /* Torna os formulários em coluna única no celular*/
+  /* Torna os formulários em coluna única no celular */
   .form-row {
     flex-direction: column;
   }

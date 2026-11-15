@@ -11,7 +11,11 @@
     else if (path.includes("configuracoes")) paginaAtual = "configuracoes";
 
     const sidebarHTML = `
-      <nav class="sidebar" id="sidebar" style="transition: width 0.3s ease;">
+      <!-- Botão Hamburger Mobile flutuante -->
+      <button class="mobile-menu-btn" aria-label="Abrir Menu"><i>☰</i></button>
+      <div class="sidebar-overlay"></div>
+
+      <nav class="sidebar" id="sidebar" style="transition: width 0.3s ease, left 0.3s ease;">
         <div class="sidebar-header" style="padding: 15px; text-align: center">
           <img src="img/logo.png" alt="Trufos" style="max-width: 140px; height: auto" class="menu-text" />
         </div>
@@ -45,10 +49,13 @@
 
     const sidebar = document.getElementById("sidebar");
     const toggleBtn = sidebar.querySelector(".sidebar-toggle");
+    const mobileBtn = document.querySelector(".mobile-menu-btn");
+    const overlay = document.querySelector(".sidebar-overlay");
     const mainContent = document.querySelector(".main-content");
     const textos = sidebar.querySelectorAll(".menu-text");
 
     function aplicarEstado(recolhido) {
+      if (window.innerWidth <= 768) return; // No mobile o comportamento é via classe open
       if (recolhido) {
         sidebar.classList.add("collapsed", "recolhida");
         sidebar.style.width = "70px";
@@ -59,23 +66,41 @@
         sidebar.classList.remove("collapsed", "recolhida");
         sidebar.style.width = "";
         sidebar.style.minWidth = "";
-        // Garante que o display volta a ser flex/inline apropriado para os textos aparecerem
         textos.forEach((el) => (el.style.display = ""));
         if (mainContent) mainContent.style.marginLeft = "";
       }
     }
 
-    // Restaura o estado salvo ao carregar
+    // Restaura o estado salvo no desktop
     const estaRecolhido = localStorage.getItem("sidebar_collapsed") === "true";
     aplicarEstado(estaRecolhido);
 
-    // Alterna ao clicar no botão
+    // Botão de recolher (Desktop)
     toggleBtn.addEventListener("click", (e) => {
       e.preventDefault();
       const novoEstado = !sidebar.classList.contains("collapsed");
       aplicarEstado(novoEstado);
       localStorage.setItem("sidebar_collapsed", novoEstado);
     });
+
+    // Abrir/Fechar no Mobile
+    function toggleMobileMenu() {
+      sidebar.classList.toggle("mobile-open");
+      if (overlay) overlay.classList.toggle("active");
+    }
+
+    if (mobileBtn) {
+      mobileBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleMobileMenu();
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener("click", () => {
+        toggleMobileMenu();
+      });
+    }
   }
 
   if (document.readyState === "loading") {
