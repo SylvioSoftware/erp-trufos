@@ -182,6 +182,14 @@ header.header-erp {
   display: block;
 }
 
+/* Garante que a tabela no mobile permita rolagem horizontal se for muito larga */
+.table-responsive,
+.card,
+table {
+  width: 100%;
+  max-width: 100%;
+}
+
 /* --- RESPONSIVIDADE E MENU HAMBÚRGUER --- */
 @media (max-width: 768px) {
   .mobile-menu-btn {
@@ -233,5 +241,24 @@ header.header-erp {
   /* Torna os formulários em coluna única no celular */
   .form-row {
     flex-direction: column;
+  }
+
+  /* Torna o bloco de ações operacionais flexível e com quebra de linha (wrap) para não cortar */
+  .acoes-operacionais,
+  td.acoes-cell,
+  .acoes-hub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: 150px; /* Ajusta conforme o espaço da coluna */
+  }
+
+  /* Compacta um pouco os botões de ação no mobile para caberem todos */
+  .acoes-operacionais button,
+  td.acoes-cell button,
+  .acoes-hub button,
+  .acoes-operacionais a {
+    padding: 4px 6px;
+    font-size: 0.85em;
   }
 }
