@@ -41,6 +41,9 @@
           <button type="button" class="tab-btn" data-target="aba-financeiro">
             4 - Produtos e Valores
           </button>
+          <button type="button" class="tab-btn" data-target="aba-imagens">
+            5 - Imagens
+          </button>
         </div>
 
         <!-- Conteúdo das Abas -->
@@ -487,6 +490,61 @@
                   <b>Valor Total da OS</b> manualmente a qualquer momento para
                   aplicar um preço personalizado.
                 </small>
+              </div>
+            </div>
+
+            <!-- Aba 5: Imagens e Evidências -->
+            <div id="aba-imagens" class="tab-pane" style="display: none">
+              <h3>Fotos e Evidências da OS</h3>
+
+              <!-- Botão de Ação para Adicionar Fotos -->
+              <div class="form-group" style="margin-bottom: 25px">
+                <label
+                  style="
+                    font-weight: bold;
+                    color: #1e293b;
+                    display: block;
+                    margin-bottom: 8px;
+                  "
+                  >Adicionar Nova Imagem</label
+                >
+                <input
+                  type="file"
+                  id="os-input-foto"
+                  class="form-control"
+                  accept="image/*"
+                  capture="environment"
+                  style="padding: 10px; background: #f8fafc"
+                />
+                <small style="color: #64748b; display: block; margin-top: 5px">
+                  💡 No celular, dispara a câmera traseira automaticamente. No
+                  computador, seleciona arquivos do disco.
+                </small>
+              </div>
+
+              <!-- Container onde as miniaturas (thumbnails) e legendas aparecerão dinamicamente -->
+              <div
+                id="os-galeria-imagens"
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                  gap: 20px;
+                "
+              >
+                <!-- Estado vazio inicial -->
+                <div
+                  style="
+                    grid-column: 1 / -1;
+                    padding: 30px;
+                    text-align: center;
+                    background: #f8fafc;
+                    border: 2px dashed #cbd5e1;
+                    border-radius: 8px;
+                    color: #64748b;
+                  "
+                >
+                  📸 Nenhuma imagem anexada a esta Ordem de Serviço ainda.
+                </div>
               </div>
             </div>
 

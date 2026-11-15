@@ -22,22 +22,22 @@
 
         <div class="menu-links">
           <a href="index.html" class="menu-item ${paginaAtual === "index" ? "active" : ""}">
-            <i>🏠</i> <span class="menu-text">Painel Principal</span>
+            🏠 <span class="menu-text">Painel Principal</span>
           </a>
           <a href="ordens-servico.html" class="menu-item ${paginaAtual === "os" ? "active" : ""}">
-            <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
+            🛠️ <span class="menu-text">Ordens de Serviço</span>
           </a>
           <a href="clientes.html" class="menu-item ${paginaAtual === "clientes" ? "active" : ""}">
-            <i>👥</i> <span class="menu-text">Clientes</span>
+            👥 <span class="menu-text">Clientes</span>
           </a>
           <a href="equipamentos.html" class="menu-item ${paginaAtual === "equipamentos" ? "active" : ""}">
-            <i>🔬</i> <span class="menu-text">Equipamentos</span>
+            🔬 <span class="menu-text">Equipamentos</span>
           </a>
           <a href="produtos-servicos.html" class="menu-item ${paginaAtual === "produtos" ? "active" : ""}">
-            <i>📦</i> <span class="menu-text">Produtos e Serviços</span>
+            📦 <span class="menu-text">Produtos e Serviços</span>
           </a>
           <a href="configuracoes.html" class="menu-item ${paginaAtual === "configuracoes" ? "active" : ""}">
-            <i>⚙️</i> <span class="menu-text">Configurações</span>
+            ⚙️ <span class="menu-text">Configurações</span>
           </a>
         </div>
 
