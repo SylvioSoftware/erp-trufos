@@ -11,36 +11,9 @@
     <script src="js/core/auth.js"></script>
   </head>
   <body>
-    <!-- NAV LATERAL RETRÁTIL -->
-    <nav class="sidebar" id="sidebar">
-      <div class="sidebar-header" style="padding: 15px; text-align: center">
-        <img
-          src="img/logo.png"
-          alt="Trufos"
-          style="max-width: 140px; height: auto"
-          class="menu-text"
-        />
-      </div>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
 
-      <div class="menu-links">
-        <a href="index.html" class="menu-item">
-          <i>🏠</i> <span class="menu-text">Painel Principal</span>
-        </a>
-        <a href="ordens-servico.html" class="menu-item">
-          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
-        </a>
-        <a href="clientes.html" class="menu-item active">
-          <i>👥</i> <span class="menu-text">Clientes</span>
-        </a>
-        <a href="equipamentos.html" class="menu-item">
-          <i>🔬</i> <span class="menu-text">Equipamentos</span>
-        </a>
-      </div>
-
-      <button class="sidebar-toggle"><i>≡</i></button>
-    </nav>
-
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- CONTEÚDO PRINCIPAL (Apenas o que muda em cada tela!) -->
     <main class="main-content">
       <header class="header-erp">
         <div class="header-text-erp">
@@ -415,6 +388,10 @@
       </div>
     </div>
 
+    <!-- Scripts -->
+    <!-- Script específico da página -->
     <script type="module" src="js/clientes/clientes-main.js"></script>
+    <!-- Script Global da Sidebar -->
+    <script src="js/core/sidebar.js"></script>
   </body>
 </html>

@@ -1,26 +1,24 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trufos ERP - Ordens de Serviço</title>
+    <title>Trufos ERP - Gestão de Clientes</title>
     <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
   </head>
   <body>
-    <aside class="sidebar">
-      <div class="sidebar-brand">Trufos ERP</div>
-      <ul class="sidebar-menu">
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="clientes.html">Clientes</a></li>
-        <li>
-          <a href="ordens-servico.html" class="active">Ordens de Serviço</a>
-        </li>
-      </ul>
-    </aside>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
 
+    <!-- CONTEÚDO PRINCIPAL (Apenas o que muda em cada tela!) -->
     <main class="main-content">
-      <header class="topbar">
-        <h1>Gestão de Ordem de Serviço</h1>
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Gestão de Ordem de Serviço</h1>
+        </div>
       </header>
 
       <div
@@ -172,6 +170,8 @@
       </div>
     </main>
 
+    <!-- Scripts -->
+    <script src="js/core/sidebar.js"></script>
     <script type="module" src="js/ordens-servico/ordens-main.js"></script>
   </body>
 </html>

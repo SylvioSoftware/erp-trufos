@@ -6,64 +6,14 @@
     <title>Trufos ERP - Painel de Controle</title>
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
     <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
     <script src="js/core/auth.js"></script>
   </head>
   <body>
-    <nav class="sidebar" id="sidebar">
-      <div class="sidebar-header" style="padding: 15px; text-align: center">
-        <img
-          src="img/logo.png"
-          alt="Trufos"
-          style="max-width: 140px; height: auto"
-          class="menu-text"
-        />
-      </div>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
 
-      <div class="menu-links">
-        <a href="index.html" class="menu-item active">
-          <i>🏠</i> <span class="menu-text">Painel Principal</span>
-        </a>
-        <a href="ordens-servico.html" class="menu-item">
-          <i>🛠️</i> <span class="menu-text">Ordens de Serviço</span>
-        </a>
-        <a href="clientes.html" class="menu-item">
-          <i>👥</i> <span class="menu-text">Clientes</span>
-        </a>
-        <a href="equipamentos.html" class="menu-item">
-          <i>🔬</i> <span class="menu-text">Equipamentos</span>
-        </a>
-        <a
-          href="#"
-          class="menu-item"
-          style="opacity: 0.5; cursor: not-allowed"
-          title="Módulo em desenvolvimento (Fase 2)"
-          onclick="
-            alert('Módulo de Central WhatsApp / IA previsto para a Fase 2!');
-            return false;
-          "
-        >
-          <i>💬</i>
-          <span class="menu-text">
-            Atendimento WA
-            <small
-              style="
-                font-size: 0.7em;
-                background: rgba(255, 255, 255, 0.2);
-                padding: 2px 5px;
-                border-radius: 4px;
-                margin-left: 4px;
-              "
-            >
-              Em breve
-            </small>
-          </span>
-        </a>
-      </div>
-
-      <button class="sidebar-toggle"><i>≡</i></button>
-    </nav>
-
+    <!-- CONTEÚDO PRINCIPAL (Apenas o que muda em cada tela!) -->
     <main class="main-content">
       <header class="header-erp">
         <div class="header-text-erp">
@@ -189,7 +139,8 @@
         </div>
       </div>
     </main>
-
+    <!-- Scripts -->
     <script type="module" src="js/dashboard/dashboard.js"></script>
+    <script src="js/core/sidebar.js"></script>
   </body>
 </html>

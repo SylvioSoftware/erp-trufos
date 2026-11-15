@@ -1,11 +1,9 @@
 // js/dashboard/dashboard.js - Painel de Gestão Operacional
 
 import { apiGet } from "../core/api.js";
-import { initLayout } from "../core/layout.js";
-
 async function carregarDashboard() {
   try {
-    const dados = await apiGet("erp-dashboard-dados");
+    const dados = await apiGet("erp-dashboard");
 
     // 1. Próximas Manutenções
     const tbodyManutencoes = document.getElementById("listaManutencoes");
@@ -90,6 +88,5 @@ window.cancelarOrcamento = (osId) => {
 };
 
 window.addEventListener("DOMContentLoaded", () => {
-  initLayout();
   carregarDashboard();
 });

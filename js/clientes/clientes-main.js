@@ -1,7 +1,6 @@
 // js/clientes/clientes-main.js - Orquestrador da tela de Clientes
 
 import { apiGet } from "../core/api.js";
-import { initLayout } from "../core/layout.js";
 import {
   abrirModalNovoCliente,
   fecharModalCliente,
@@ -102,7 +101,6 @@ window.verClockifyCliente = (id) =>
   alert(`Abrir Apontamentos Clockify do cliente ID: ${id}`);
 
 window.addEventListener("DOMContentLoaded", () => {
-  initLayout();
   configurarBusca();
   carregarClientes();
 });

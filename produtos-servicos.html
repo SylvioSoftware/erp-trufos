@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Gestão de Clientes</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
+  </head>
+  <body>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
+
+    <!-- CONTEÚDO PRINCIPAL (Apenas o que muda em cada tela!) -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Catálogo de Produtos e Serviços</h1>
+          <p>Gerencie peças de reposição, insumos e serviços técnicos</p>
+        </div>
+      </header>
+
+      <div class="page-header-actions">
+        <div style="display: flex; gap: 10px; flex: 1; flex-wrap: wrap">
+          <input
+            type="text"
+            id="buscaItem"
+            class="form-input"
+            placeholder="🔍 Buscar por nome ou código..."
+            style="flex: 1; min-width: 250px"
+          />
+          <select id="filtroTipo" class="form-input" style="width: 200px">
+            <option value="">Todos os Tipos</option>
+            <option value="PRODUTO">Apenas Produtos</option>
+            <option value="SERVICO">Apenas Serviços</option>
+          </select>
+        </div>
+        <button type="button" id="btnNovoItem" class="btn-principal">
+          + Novo Item
+        </button>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Cód.</th>
+              <th>Tipo</th>
+              <th>Nome / Descrição</th>
+              <th>Unid.</th>
+              <th>Preço Venda</th>
+              <th>Estoque</th>
+              <th style="width: 140px; text-align: center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaProdutosServicos">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 20px">
+                Carregando catálogo...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Modal de Cadastro / Edição -->
+    <div id="modalItem" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitulo">Novo Produto / Serviço</h2>
+          <button type="button" id="btnFecharModal" class="btn-close">
+            &times;
+          </button>
+        </div>
+        <form id="formProdutoServico">
+          <input type="hidden" id="itemId" />
+
+          <div
+            class="form-row"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px"
+          >
+            <div class="form-group">
+              <label>Tipo *</label>
+              <select id="itemTipo" class="form-control" required>
+                <option value="SERVICO">Serviço Técnico</option>
+                <option value="PRODUTO">Produto / Peça</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Código Interno / SKU</label>
+              <input
+                type="text"
+                id="itemCodigo"
+                class="form-control"
+                placeholder="Ex: SRV-001"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Nome do Produto ou Serviço *</label>
+            <input
+              type="text"
+              id="itemNome"
+              class="form-control"
+              required
+              placeholder="Ex: Qualificação Térmica de Autoclave"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Descrição Detalhada (Padrão para OS)</label>
+            <textarea
+              id="itemDescricao"
+              class="form-control"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <div
+            class="form-row"
+            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px"
+          >
+            <div class="form-group">
+              <label>Unidade</label>
+              <select id="itemUnidade" class="form-control">
+                <option value="UN">UN (Unidade)</option>
+                <option value="SV">SV (Serviço)</option>
+                <option value="HR">HR (Hora)</option>
+                <option value="PC">PC (Peça)</option>
+                <option value="KIT">KIT</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preço de Custo (R$)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="itemCusto"
+                class="form-control"
+                value="0.00"
+              />
+            </div>
+            <div class="form-group">
+              <label>Preço de Venda (R$) *</label>
+              <input
+                type="number"
+                step="0.01"
+                id="itemVenda"
+                class="form-control"
+                required
+                value="0.00"
+              />
+            </div>
+          </div>
+
+          <div class="form-group" id="grupoEstoque" style="display: none">
+            <label>Estoque Atual</label>
+            <input
+              type="number"
+              id="itemEstoque"
+              class="form-control"
+              value="0"
+            />
+          </div>
+
+          <div
+            class="modal-footer"
+            style="
+              margin-top: 20px;
+              display: flex;
+              justify-content: flex-end;
+              gap: 10px;
+            "
+          >
+            <button type="button" id="btnCancelarModal" class="btn-secondary">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">Salvar Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/core/sidebar.js"></script>
+    <script type="module" src="js/produtos-servicos/produtos-main.js"></script>
+  </body>
+</html>

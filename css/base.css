@@ -138,6 +138,9 @@ header.header-erp {
 }
 
 /* --- RESPONSIVIDADE E MENU HAMBÚRGUER --- */
+* {
+  box-sizing: border-box;
+}
 @media (max-width: 768px) {
   body {
     grid-template-columns: 1fr;
@@ -150,20 +153,60 @@ header.header-erp {
     left: -260px;
     top: 0;
     width: 260px;
-    height: 100%;
+    height: 100vh;
     z-index: 1000;
     transition: left 0.3s ease;
+    padding-top: 50px;
   }
 
   /* Classe para abrir o menu via JS */
-  .sidebar.ativo {
+  .sidebar.ativo,
+  .sidebar.open {
     left: 0;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
   }
 
-  /* Ajusta o conteúdo principal para ocupar a tela toda */
-  .main-content {
-    padding: 15px;
+  .sidebar.collapsed {
+    width: 260px;
+  }
+
+  .sidebar.collapsed .menu-text {
+    display: inline;
+  }
+
+  /* Descola o botão hambúrguer da sidebar escondida e fixa no topo */
+  .sidebar-toggle {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    margin-top: 0;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--azul-trufos);
+    color: var(--branco);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    z-index: 1100;
+    font-size: 1.4em;
+  }
+
+  /* Remove o espaço vazio à esquerda e ajusta o topo */
+  .main-content,
+  .sidebar.collapsed ~ .main-content {
+    margin-left: 0 !important;
     width: 100%;
+    padding: 65px 12px 20px 12px;
+  }
+
+  header.header-erp {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 5px 15px 5px;
+    gap: 10px;
   }
 
   /* Torna os formulários em coluna única no celular */
