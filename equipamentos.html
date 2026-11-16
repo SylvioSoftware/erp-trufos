@@ -1,23 +1,125 @@
-<table class="tabela-dados">
-  <thead>
-    <tr>
-      <th>Cliente</th>
-      <th>Equipamento (Modelo / Marca)</th>
-      <th>Nº de Série</th>
-      <th>Patrimônio / TAG</th>
-      <th>⏱️ Tempo Médio (HT)</th>
-      <th style="width: 150px; text-align: center;">Ações</th>
-    </tr>
-  </thead>
-  <tbody id="listaEquipamentosTabela">
-    <!-- Exemplo visual de linha preenchida via JS -->
-    <tr>
-      <td>Hospital São Lucas</td>
-      <td>Autoclave HS 22L (Sercon)</td>
-      <td>SN123456</td>
-      <td>PAT-0089</td>
-      <td><strong>2.5h</strong> (Média cadastrada/Clockify)</td>
-      <td style="text-align: center;">...</td>
-    </tr>
-  </tbody>
-</table>
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Gestão de Equipamentos</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
+  </head>
+  <body>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
+
+    <!-- CONTEÚDO PRINCIPAL (Apenas o que muda em cada tela!) -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Parque de Equipamentos</h1>
+          <p>Gestão de tipos, fabricantes, modelos e equipamentos instalados nos clientes</p>
+        </div>
+      </header>
+
+      <div class="page-header-actions" style="display: flex; gap: 15px; align-items: center; justify-content: space-between; margin-top: 20px; margin-bottom: 20px;">
+        <input
+          type="text"
+          id="filtroEquipamento"
+          placeholder="🔍 Buscar por cliente, modelo, série ou patrimônio..."
+          class="form-input"
+          style="width: 350px;"
+        />
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secundario" onclick="abrirModalModelos()" style="background: #475569; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            ⚙️ Gerenciar Marcas/Modelos
+          </button>
+          <button class="btn-principal" onclick="abrirModalNovoParque()">
+            + Novo Equipamento no Cliente
+          </button>
+        </div>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Equipamento (Modelo / Marca)</th>
+              <th>Nº de Série</th>
+              <th>Patrimônio / TAG</th>
+              <th>⏱️ Tempo Médio (HT)</th>
+              <th style="width: 150px; text-align: center;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listaEquipamentosTabela">
+            <tr>
+              <td>Hospital São Lucas</td>
+              <td>Autoclave HS 22L (Sercon)</td>
+              <td>SN123456</td>
+              <td>PAT-0089</td>
+              <td><strong>2.5h</strong> (Média cadastrada/Clockify)</td>
+              <td style="text-align: center;">...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL DE PARQUE INSTALADO -->
+    <div id="modalParque" class="modal-overlay">
+      <div class="modal-card" style="max-width: 600px;">
+        <h2 id="tituloModalParque" style="margin-top: 0; color: var(--azul-logo-trufos); margin-bottom: 25px;">
+          Vincular Equipamento ao Cliente
+        </h2>
+
+        <form id="formParque" onsubmit="salvarParque(event)">
+          <input type="hidden" id="parqueIdEdicao" />
+
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label class="form-label">Cliente *</label>
+            <select id="cliente_id" required class="form-input">
+              <option value="">Selecione o cliente...</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label class="form-label">Modelo do Equipamento (com Marca e Tipo) *</label>
+            <select id="modelo_id" required class="form-input">
+              <option value="">Selecione o modelo...</option>
+            </select>
+          </div>
+
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+              <label class="form-label">Número de Série</label>
+              <input type="text" id="numero_serie" class="form-input" placeholder="Ex: SN123456" />
+            </div>
+            <div>
+              <label class="form-label">Patrimônio / TAG</label>
+              <input type="text" id="patrimonio_tag" class="form-input" placeholder="Ex: PAT-0089" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label class="form-label">Observações Técnicas</label>
+            <textarea id="observacoes" class="form-input" rows="3" placeholder="Detalhes de localização, estado de conservação..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <button type="button" onclick="fecharModalParque()" style="background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Cancelar
+            </button>
+            <button type="submit" style="background: var(--azul-trufos); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Salvar Equipamento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/equipamentos/equipamentos-main.js"></script>
+    <script src="js/core/sidebar.js"></script>
+  </body>
+</html>
