@@ -8,7 +8,8 @@
     else if (path.includes("clientes")) paginaAtual = "clientes";
     else if (path.includes("fornecedores")) paginaAtual = "fornecedores";
     else if (path.includes("equipamentos")) paginaAtual = "equipamentos";
-    else if (path.includes("produtos-servicos")) paginaAtual = "produtos";
+    else if (path.includes("produtos")) paginaAtual = "produtos";
+    else if (path.includes("servicos")) paginaAtual = "servicos";
     else if (path.includes("configuracoes")) paginaAtual = "configuracoes";
 
     const sidebarHTML = `
@@ -37,8 +38,11 @@
           <a href="equipamentos.html" class="menu-item ${paginaAtual === "equipamentos" ? "active" : ""}">
             🔬 <span class="menu-text">Equipamentos</span>
           </a>
-          <a href="produtos-servicos.html" class="menu-item ${paginaAtual === "produtos" ? "active" : ""}">
-            📦 <span class="menu-text">Produtos e Serviços</span>
+          <a href="produtos.html" class="menu-item ${paginaAtual === "produtos" ? "active" : ""}">
+            📦 <span class="menu-text">Produtos e Peças</span>
+          </a>
+          <a href="servicos.html" class="menu-item ${paginaAtual === "servicos" ? "active" : ""}">
+            🔧 <span class="menu-text">Serviços</span>
           </a>
           <a href="configuracoes.html" class="menu-item ${paginaAtual === "configuracoes" ? "active" : ""}">
             ⚙️ <span class="menu-text">Configurações</span>
