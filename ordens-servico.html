@@ -461,7 +461,6 @@
                     <label style="color: #0f172a; font-weight: bold"
                       >Valor Total da OS (Editável)</label
                     >
-                    <!-- Campo liberado/editável para você digitar o valor final que quiser cobrar -->
                     <input
                       type="number"
                       step="0.01"
@@ -497,28 +496,58 @@
             <div id="aba-imagens" class="tab-pane" style="display: none">
               <h3>Fotos e Evidências da OS</h3>
 
-              <!-- Botão de Ação para Adicionar Fotos -->
+              <!-- Botões de Ação Duplos (Câmera Direta ou Galeria) -->
               <div class="form-group" style="margin-bottom: 25px">
                 <label
                   style="
                     font-weight: bold;
                     color: #1e293b;
                     display: block;
-                    margin-bottom: 8px;
+                    margin-bottom: 12px;
                   "
-                  >Adicionar Nova Imagem</label
+                  >Adicionar Imagens (Fotos)</label
                 >
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <!-- Botão para Câmera Direta -->
+                  <button
+                    type="button"
+                    onclick="document.getElementById('os-input-camera').click()"
+                    class="btn-primary"
+                    style="display: flex; align-items: center; gap: 8px; padding: 10px 18px;"
+                  >
+                    📸 Tirar Foto com a Câmera
+                  </button>
+
+                  <!-- Botão para Galeria / Arquivos -->
+                  <button
+                    type="button"
+                    onclick="document.getElementById('os-input-galeria').click()"
+                    class="btn-secondary"
+                    style="display: flex; align-items: center; gap: 8px; padding: 10px 18px;"
+                  >
+                    🖼️ Escolher da Galeria
+                  </button>
+                </div>
+
+                <!-- Inputs Ocultos para manipulação separada -->
                 <input
                   type="file"
-                  id="os-input-foto"
-                  class="form-control"
+                  id="os-input-camera"
                   accept="image/*"
                   capture="environment"
-                  style="padding: 10px; background: #f8fafc"
+                  style="display: none;"
                 />
-                <small style="color: #64748b; display: block; margin-top: 5px">
-                  💡 No celular, dispara a câmera traseira automaticamente. No
-                  computador, seleciona arquivos do disco.
+                <input
+                  type="file"
+                  id="os-input-galeria"
+                  accept="image/*"
+                  multiple
+                  style="display: none;"
+                />
+
+                <small style="color: #64748b; display: block; margin-top: 8px">
+                  💡 Use "Tirar Foto" para abrir a câmera imediatamente ou "Escolher da Galeria" para selecionar uma ou mais imagens já salvas no dispositivo[span_1](start_span)[span_1](end_span).
                 </small>
               </div>
 
