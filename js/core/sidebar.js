@@ -6,6 +6,7 @@
     let paginaAtual = "index";
     if (path.includes("ordens-servico")) paginaAtual = "os";
     else if (path.includes("clientes")) paginaAtual = "clientes";
+    else if (path.includes("fornecedores")) paginaAtual = "fornecedores";
     else if (path.includes("equipamentos")) paginaAtual = "equipamentos";
     else if (path.includes("produtos-servicos")) paginaAtual = "produtos";
     else if (path.includes("configuracoes")) paginaAtual = "configuracoes";
@@ -29,6 +30,9 @@
           </a>
           <a href="clientes.html" class="menu-item ${paginaAtual === "clientes" ? "active" : ""}">
             👥 <span class="menu-text">Clientes</span>
+          </a>
+          <a href="fornecedores.html" class="menu-item ${paginaAtual === "fornecedores" ? "active" : ""}">
+            🚚 <span class="menu-text">Fornecedores</span>
           </a>
           <a href="equipamentos.html" class="menu-item ${paginaAtual === "equipamentos" ? "active" : ""}">
             🔬 <span class="menu-text">Equipamentos</span>

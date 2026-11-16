@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Gestão de Fornecedores</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
+  </head>
+  <body>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Fornecedores</h1>
+          <p>
+            Gerenciamento de cadastros, endereços e parceiros de peças/insumos
+          </p>
+        </div>
+      </header>
+
+      <div class="page-header-actions">
+        <input
+          type="text"
+          id="filtroFornecedor"
+          placeholder="🔍 Buscar por nome, CNPJ ou cidade..."
+          class="form-input"
+          style="width: 320px"
+        />
+        <button class="btn-principal" onclick="abrirModalNovoFornecedor()">
+          + Novo Fornecedor
+        </button>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Fornecedor</th>
+              <th>Cidade / UF</th>
+              <th style="width: 180px">Ações Operacionais</th>
+            </tr>
+          </thead>
+          <tbody id="listaFornecedoresTabela"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL DE FORNECEDOR (NOVO / EDIÇÃO) -->
+    <div id="modalFornecedor" class="modal-overlay">
+      <div class="modal-card">
+        <h2
+          id="tituloModalFornecedor"
+          style="
+            margin-top: 0;
+            color: var(--azul-logo-trufos);
+            margin-bottom: 25px;
+          "
+        >
+          Novo Fornecedor
+        </h2>
+
+        <form id="formFornecedor" onsubmit="salvarFornecedor(event)">
+          <input type="hidden" id="fornecedorIdEdicao" />
+
+          <div class="form-group">
+            <label class="form-label">CNPJ *</label>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                id="cnpj"
+                placeholder="00.000.000/0001-00"
+                required
+                class="form-input"
+                onblur="consultarCNPJFornecedor(this.value)"
+              />
+              <button
+                type="button"
+                onclick="
+                  consultarCNPJFornecedor(document.getElementById('cnpj').value)
+                "
+                style="
+                  background: #e2e8f0;
+                  border: 1px solid #cbd5e1;
+                  padding: 0 18px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                🔍 Buscar
+              </button>
+            </div>
+            <small
+              id="statusCnpj"
+              style="
+                color: #64748b;
+                font-size: 0.8em;
+                margin-top: 4px;
+                display: block;
+              "
+            ></small>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label class="form-label">Razão Social *</label>
+              <input
+                type="text"
+                id="razao_social"
+                required
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Nome Fantasia</label>
+              <input type="text" id="nome_fantasia" class="form-input" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label class="form-label">Inscrição Estadual (IE)</label>
+              <input
+                type="text"
+                id="inscricao_estadual"
+                class="form-input"
+                placeholder="Isento ou número"
+              />
+            </div>
+            <div>
+              <label class="form-label">Chave PIX / Dados Bancários</label>
+              <input
+                type="text"
+                id="dados_bancarios"
+                class="form-input"
+                placeholder="PIX, Banco, Ag, CC..."
+              />
+            </div>
+          </div>
+
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">CEP</label>
+              <input
+                type="text"
+                id="cep"
+                placeholder="00000-000"
+                maxlength="9"
+                class="form-input"
+                oninput="mascaraCEP(this)"
+              />
+            </div>
+            <div style="grid-column: span 2">
+              <label class="form-label">Logradouro / Endereço</label>
+              <input
+                type="text"
+                id="logradouro"
+                placeholder="Ex: Av. Ipiranga"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Número</label>
+              <input
+                type="text"
+                id="numero"
+                placeholder="Nº"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row-4">
+            <div>
+              <label class="form-label">Complemento</label>
+              <input
+                type="text"
+                id="complemento"
+                placeholder="Sala, Bloco..."
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Bairro</label>
+              <input type="text" id="bairro" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">Cidade</label>
+              <input type="text" id="cidade" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">UF</label>
+              <input type="text" id="uf" class="form-input" maxlength="2" />
+            </div>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 25px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 20px;
+            "
+          >
+            <button
+              type="button"
+              id="btnModalContatos"
+              style="
+                background: #f1f5f9;
+                color: #94a3b8;
+                border: 1px solid #cbd5e1;
+                padding: 10px 16px;
+                border-radius: 6px;
+                cursor: not-allowed;
+                font-weight: 600;
+                opacity: 0.6;
+                transition: all 0.2s;
+              "
+              disabled
+              onclick="abrirContatosFornecedorAtual()"
+            >
+              👥 Contatos / Representantes
+            </button>
+
+            <div style="display: flex; gap: 10px">
+              <button
+                type="button"
+                onclick="fecharModalFornecedor()"
+                style="
+                  background: #e2e8f0;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                style="
+                  background: var(--azul-trufos);
+                  color: white;
+                  border: none;
+                  padding: 10px 20px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Salvar Fornecedor
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CONTATOS DO FORNECEDOR (SOBREPOSTO) -->
+    <div id="modalContatos" class="modal-overlay modal-sobreposto">
+      <div class="modal-card">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <h2 style="margin: 0; color: var(--azul-logo-trufos); border: none">
+            👥 Contatos / Representantes
+          </h2>
+          <button
+            type="button"
+            onclick="fecharModalContatos()"
+            style="
+              background: none;
+              border: none;
+              font-size: 20px;
+              cursor: pointer;
+            "
+          >
+            ✖
+          </button>
+        </div>
+
+        <input type="hidden" id="contato_fornecedor_id" />
+        <input type="hidden" id="contato_id" />
+
+        <div
+          style="
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+          "
+        >
+          <div class="form-row" style="margin-bottom: 10px">
+            <div>
+              <label class="form-label">Nome *</label>
+              <input
+                type="text"
+                id="contato_nome"
+                placeholder="Ex: João / Representante Comercial"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">Departamento / Cargo</label>
+              <input
+                type="text"
+                id="contato_departamento"
+                placeholder="Ex: Vendas, Suporte Técnico"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1.5fr auto;
+              gap: 10px;
+              align-items: end;
+            "
+          >
+            <div>
+              <label class="form-label">Telefone / WhatsApp</label>
+              <input
+                type="text"
+                id="contato_telefone"
+                placeholder="(51) 99999-9999"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label class="form-label">E-mail</label>
+              <input
+                type="email"
+                id="contato_email"
+                placeholder="vendas@fornecedor.com.br"
+                class="form-input"
+              />
+            </div>
+            <button
+              type="button"
+              onclick="salvarContato()"
+              class="btn-principal"
+            >
+              + Adicionar
+            </button>
+          </div>
+        </div>
+
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Setor</th>
+              <th>Telefone</th>
+              <th>E-mail</th>
+              <th style="text-align: center">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="listaContatosTabela">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 15px">
+                Carregando...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/fornecedores/fornecedores-main.js"></script>
+    <script src="js/core/sidebar.js"></script>
+  </body>
+</html>
