@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Catálogo de Produtos e Peças</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
+  </head>
+  <body>
+    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
+
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Produtos e Peças</h1>
+          <p>Gestão de insumos, peças de reposição, custos e margens</p>
+        </div>
+      </header>
+
+      <div class="page-header-actions">
+        <input
+          type="text"
+          id="filtroProduto"
+          placeholder="🔍 Buscar por código, descrição ou fabricante..."
+          class="form-input"
+          style="width: 320px"
+        />
+        <button class="btn-principal" onclick="abrirModalNovoProduto()">
+          + Nova Peça / Produto
+        </button>
+      </div>
+
+      <div class="card-tabela">
+        <table class="tabela-dados">
+          <thead>
+            <tr>
+              <th>Código / SKU</th>
+              <th>Descrição do Item</th>
+              <th>Preço Custo</th>
+              <th>Preço Venda</th>
+              <th style="width: 150px; text-align: center;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listaProdutosTabela"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL DE PRODUTO -->
+    <div id="modalProduto" class="modal-overlay">
+      <div class="modal-card">
+        <h2 id="tituloModalProduto" style="margin-top: 0; color: var(--azul-logo-trufos); margin-bottom: 25px;">
+          Nova Peça / Produto
+        </h2>
+
+        <form id="formProduto" onsubmit="salvarProduto(event)">
+          <input type="hidden" id="produtoIdEdicao" />
+
+          <div class="form-row">
+            <div>
+              <label class="form-label">Código / SKU *</label>
+              <input type="text" id="codigo" required class="form-input" placeholder="Ex: PEC-001" />
+            </div>
+            <div>
+              <label class="form-label">Descrição da Peça *</label>
+              <input type="text" id="descricao" required class="form-input" placeholder="Ex: Resistência Autoclave 22L" />
+            </div>
+          </div>
+
+          <div class="form-row-4" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div>
+              <label class="form-label">Preço de Custo (R$)</label>
+              <input type="number" step="0.01" id="preco_custo" class="form-input" value="0.00" />
+            </div>
+            <div>
+              <label class="form-label">Margem (%)</label>
+              <input type="number" step="0.01" id="margem_lucro" class="form-input" value="50.00" />
+            </div>
+            <div>
+              <label class="form-label">Preço de Venda (R$) *</label>
+              <input type="number" step="0.01" id="preco_venda" required class="form-input" value="0.00" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label">Fornecedor Principal</label>
+            <select id="fornecedor_id" class="form-input">
+              <option value="">Selecione um fornecedor...</option>
+              <!-- Preenchido via JS -->
+            </select>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <button type="button" onclick="fecharModalProduto()" style="background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Cancelar
+            </button>
+            <button type="submit" style="background: var(--azul-trufos); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Salvar Produto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="js/produtos/produtos-main.js"></script>
+    <script src="js/core/sidebar.js"></script>
+  </body>
+</html>
