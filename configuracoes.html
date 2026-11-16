@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trufos ERP - Configurações da Empresa</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/componentes.css" />
+    <link rel="stylesheet" href="css/modais.css" />
+    <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
+    <script src="js/core/auth.js"></script>
+  </head>
+  <body>
+    <main class="main-content">
+      <header class="header-erp">
+        <div class="header-text-erp">
+          <h1>Configurações do Sistema</h1>
+          <p>Dados cadastrais da empresa, identidade visual e gestão de assinatura SaaS</p>
+        </div>
+      </header>
+
+      <div class="card-tabela" style="padding: 30px; margin-top: 20px;">
+        <form id="formConfiguracoes" onsubmit="salvarConfiguracoes(event)">
+          
+          <h3 style="color: var(--azul-logo-trufos); margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            🏢 Dados da Empresa (Emissor)
+          </h3>
+
+          <div class="form-row">
+            <div>
+              <label class="form-label">Razão Social *</label>
+              <input type="text" id="razao_social" required class="form-input" placeholder="Ex: Trufos Assistência Técnica" />
+            </div>
+            <div>
+              <label class="form-label">Nome Fantasia</label>
+              <input type="text" id="nome_fantasia" class="form-input" placeholder="Ex: Trufos Hospitalar" />
+            </div>
+          </div>
+
+          <div class="form-row-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div>
+              <label class="form-label">CNPJ *</label>
+              <input type="text" id="cnpj" required class="form-input" placeholder="00.000.000/0001-00" />
+            </div>
+            <div>
+              <label class="form-label">Inscrição Estadual</label>
+              <input type="text" id="inscricao_estadual" class="form-input" placeholder="Isento ou número" />
+            </div>
+            <div>
+              <label class="form-label">Telefone / WhatsApp</label>
+              <input type="text" id="telefone" class="form-input" placeholder="(51) 99999-9999" />
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 15px;">
+            <div>
+              <label class="form-label">E-mail de Contato</label>
+              <input type="email" id="email" class="form-input" placeholder="contato@trufos.com.br" />
+            </div>
+            <div>
+              <label class="form-label">CEP</label>
+              <input type="text" id="cep" class="form-input" placeholder="00000-000" />
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 15px;">
+            <div>
+              <label class="form-label">Logradouro / Endereço</label>
+              <input type="text" id="logradouro" class="form-input" placeholder="Rua, Avenida..." />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+              <div>
+                <label class="form-label">Número</label>
+                <input type="text" id="numero" class="form-input" placeholder="123" />
+              </div>
+              <div>
+                <label class="form-label">Bairro</label>
+                <input type="text" id="bairro" class="form-input" placeholder="Bairro" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 15px;">
+            <div>
+              <label class="form-label">Cidade</label>
+              <input type="text" id="cidade" class="form-input" placeholder="Cidade" />
+            </div>
+            <div>
+              <label class="form-label">UF</label>
+              <input type="text" id="uf" class="form-input" placeholder="RS" maxlength="2" />
+            </div>
+          </div>
+
+          <h3 style="color: var(--azul-logo-trufos); margin-top: 40px; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            🚀 Assinatura e Personalização (SaaS)
+          </h3>
+
+          <div class="form-row-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+            <div>
+              <label class="form-label">Tipo de Assinatura</label>
+              <select id="tipo_assinatura" class="form-input">
+                <option value="FREE">FREE (MVP)</option>
+                <option value="BASICO">PAGO BÁSICO</option>
+                <option value="IMAGENS">PAGO COM IMAGENS</option>
+                <option value="IA">PAGO IA</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Validade da Assinatura</label>
+              <input type="date" id="validade_assinatura" class="form-input" />
+            </div>
+            <div>
+              <label class="form-label">Periodicidade</label>
+              <select id="periodicidade" class="form-input">
+                <option value="MENSAL">Mensal</option>
+                <option value="ANUAL">Anual</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 15px;">
+            <div>
+              <label class="form-label">URL do Logotipo</label>
+              <input type="text" id="logotipo_url" class="form-input" placeholder="img/logo.png" />
+            </div>
+            <div>
+              <label class="form-label">Cor Primária (Hex)</label>
+              <input type="color" id="cor_primaria" class="form-input" value="#0284c7" style="height: 42px; padding: 4px;" />
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <button type="submit" class="btn-principal">
+              Salvar Configurações
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </main>
+
+    <script type="module" src="js/configuracoes/configuracoes-main.js"></script>
+    <script src="js/core/sidebar.js"></script>
+  </body>
+</html>
