@@ -17,7 +17,9 @@
       <header class="header-erp">
         <div class="header-text-erp">
           <h1>Serviços e Mão de Obra</h1>
-          <p>Tabela de serviços técnicos, calibrações e taxas de deslocamento</p>
+          <p>
+            Tabela de serviços técnicos, calibrações e taxas de deslocamento
+          </p>
         </div>
       </header>
 
@@ -25,7 +27,7 @@
         <input
           type="text"
           id="filtroServico"
-          placeholder="🔍 Buscar por descrição..."
+          placeholder="🔍 Buscar por código ou descrição..."
           class="form-input"
           style="width: 320px"
         />
@@ -38,9 +40,10 @@
         <table class="tabela-dados">
           <thead>
             <tr>
+              <th style="width: 160px">Código / SKU</th>
               <th>Descrição do Serviço Técnico</th>
-              <th>Valor Padrão</th>
-              <th style="width: 150px; text-align: center;">Ações</th>
+              <th style="width: 150px">Valor Padrão</th>
+              <th style="width: 160px; text-align: center">Ações</th>
             </tr>
           </thead>
           <tbody id="listaServicosTabela"></tbody>
@@ -51,7 +54,14 @@
     <!-- MODAL DE SERVIÇO -->
     <div id="modalServico" class="modal-overlay">
       <div class="modal-card">
-        <h2 id="tituloModalServico" style="margin-top: 0; color: var(--azul-logo-trufos); margin-bottom: 25px;">
+        <h2
+          id="tituloModalServico"
+          style="
+            margin-top: 0;
+            color: var(--azul-logo-trufos);
+            margin-bottom: 25px;
+          "
+        >
           Novo Serviço
         </h2>
 
@@ -59,20 +69,106 @@
           <input type="hidden" id="servicoIdEdicao" />
 
           <div class="form-group">
-            <label class="form-label">Descrição do Serviço *</label>
-            <input type="text" id="descricao_servico" required class="form-input" placeholder="Ex: Qualificação Térmica de Autoclave" />
+            <label class="form-label">Código / SKU *</label>
+            <input
+              type="text"
+              id="codigo"
+              required
+              maxlength="13"
+              class="form-input"
+              placeholder="S-00000000001"
+            />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Valor Padrão (R$) *</label>
-            <input type="number" step="0.01" id="valor" required class="form-input" value="0.00" />
+            <label class="form-label">Descrição do Serviço *</label>
+            <input
+              type="text"
+              id="descricao_servico"
+              required
+              class="form-input"
+              placeholder="Ex: Qualificação Térmica de Autoclave"
+            />
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <button type="button" onclick="fecharModalServico()" style="background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
+            <div class="form-group">
+              <label class="form-label">Valor Hora Técnica (R$) *</label>
+              <input
+                type="number"
+                step="0.01"
+                id="valor_hora_tecnica"
+                required
+                class="form-input"
+                value="100.00"
+                oninput="calcularTotalServico()"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tempo Estimado (h) *</label>
+              <input
+                type="number"
+                step="0.1"
+                id="tempo_estimado_horas"
+                required
+                class="form-input"
+                value="1.0"
+                oninput="calcularTotalServico()"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Valor Venda Final (R$) *</label>
+            <input
+              type="number"
+              step="0.01"
+              id="valor"
+              required
+              class="form-input"
+              value="100.00"
+              style="font-weight: bold; color: #059669"
+            />
+          </div>
+
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 10px;
+              margin-top: 25px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 20px;
+            "
+          >
+            <button
+              type="button"
+              onclick="fecharModalServico()"
+              style="
+                background: #e2e8f0;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
               Cancelar
             </button>
-            <button type="submit" style="background: var(--azul-trufos); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            <button
+              type="submit"
+              id="btnSalvarServico"
+              style="
+                background: var(--azul-trufos);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
               Salvar Serviço
             </button>
           </div>
@@ -80,7 +176,7 @@
       </div>
     </div>
 
-    <script type="module" src="js/servicos/servicos-main.js"></script>
+    <script src="js/servicos/servicos-main.js"></script>
     <script src="js/core/sidebar.js"></script>
   </body>
 </html>
