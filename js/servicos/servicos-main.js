@@ -2,6 +2,7 @@ const WEBHOOK_BASE = "https://n8n.trufos.com.br/webhook";
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarServicos();
+  carregarPerfisHTNoSelect();
 
   const filtroInput = document.getElementById("filtroServico");
   if (filtroInput) {
@@ -16,12 +17,62 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Carregar Perfis de Hora Técnica para a lista suspensa do modal
+async function carregarPerfisHTNoSelect(perfilSelecionadoId = null) {
+  const select = document.getElementById("perfil_ht_id");
+  if (!select) return;
+
+  try {
+    const response = await fetch(`${WEBHOOK_BASE}/perfis-ht-listar`);
+    if (!response.ok) throw new Error("Erro ao buscar perfis HT");
+
+    const text = await response.text();
+    const perfis = text ? JSON.parse(text) : [];
+
+    select.innerHTML = '<option value="">Selecione o Perfil de HT...</option>';
+
+    if (perfis.length === 0) {
+      select.innerHTML = '<option value="">Nenhum perfil cadastrado em Configurações</option>';
+      return;
+    }
+
+    perfis.forEach((p) => {
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = `${p.descricao} (R$ ${Number(p.valor_hora).toFixed(2)}/h)`;
+      option.dataset.valor = p.valor_hora;
+      
+      if (perfilSelecionadoId && Number(p.id) === Number(perfilSelecionadoId)) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+
+    // Se houver seleção inicial, atualiza o valor hora oculto e recalcula
+    if (select.value) {
+      aoSelecionarPerfilHT();
+    }
+  } catch (error) {
+    console.error("Erro ao carregar perfis de HT:", error);
+    select.innerHTML = '<option value="">Erro ao carregar perfis de HT</option>';
+  }
+}
+
+// Ação ao mudar o perfil de hora técnica no select
+window.aoSelecionarPerfilHT = function () {
+  const select = document.getElementById("perfil_ht_id");
+  const selectedOption = select.options[select.selectedIndex];
+  
+  const valorHora = selectedOption && selectedOption.dataset.valor ? parseFloat(selectedOption.dataset.valor) : 0;
+  document.getElementById("valor_hora_tecnica").value = valorHora;
+
+  calcularTotalServico();
+};
+
 // Função de cálculo automático baseada em hora técnica x tempo estimado
 window.calcularTotalServico = function () {
-  const valorHora =
-    parseFloat(document.getElementById("valor_hora_tecnica").value) || 0;
-  const tempoHoras =
-    parseFloat(document.getElementById("tempo_estimado_horas").value) || 0;
+  const valorHora = parseFloat(document.getElementById("valor_hora_tecnica").value) || 0;
+  const tempoHoras = parseFloat(document.getElementById("tempo_estimado_horas").value) || 0;
   const total = valorHora * tempoHoras;
 
   document.getElementById("valor").value = total.toFixed(2);
@@ -108,7 +159,8 @@ window.abrirModalNovoServico = async function () {
   document.getElementById("servicoIdEdicao").value = "";
   document.getElementById("codigo").value =
     await gerarCodigoServicoSequencial();
-  document.getElementById("valor_hora_tecnica").value = "100.00";
+  
+  await carregarPerfisHTNoSelect();
   document.getElementById("tempo_estimado_horas").value = "1.0";
   calcularTotalServico();
   document.getElementById("modalServico").style.display = "flex";
@@ -118,18 +170,20 @@ window.fecharModalServico = function () {
   document.getElementById("modalServico").style.display = "none";
 };
 
-window.editarServico = function (serv) {
+window.editarServico = async function (serv) {
   document.getElementById("tituloModalServico").innerText =
     "Editar Serviço / Mão de Obra";
   document.getElementById("servicoIdEdicao").value = serv.id || "";
   document.getElementById("codigo").value = serv.codigo || "";
   document.getElementById("descricao_servico").value = serv.descricao || "";
-  document.getElementById("valor_hora_tecnica").value =
-    serv.valor_hora_tecnica ?? "100.00";
+  
+  await carregarPerfisHTNoSelect(serv.perfil_ht_id || null);
+  
   document.getElementById("tempo_estimado_horas").value =
     serv.tempo_estimado_horas ?? "1.0";
   document.getElementById("valor").value =
     serv.valor_venda ?? serv.valor ?? "0.00";
+    
   document.getElementById("modalServico").style.display = "flex";
 };
 
@@ -141,6 +195,7 @@ window.salvarServico = async function (event) {
     id: document.getElementById("servicoIdEdicao").value || null,
     codigo: document.getElementById("codigo").value.trim(),
     descricao: document.getElementById("descricao_servico").value.trim(),
+    perfil_ht_id: document.getElementById("perfil_ht_id").value || null,
     valor_hora_tecnica:
       parseFloat(document.getElementById("valor_hora_tecnica").value) || 0,
     tempo_estimado_horas:
