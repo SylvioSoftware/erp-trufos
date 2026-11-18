@@ -91,18 +91,17 @@
             />
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px">
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 15px">
             <div class="form-group">
-              <label class="form-label">Valor Hora Técnica (R$) *</label>
-              <input
-                type="number"
-                step="0.01"
-                id="valor_hora_tecnica"
-                required
-                class="form-input"
-                value="100.00"
-                oninput="calcularTotalServico()"
-              />
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label class="form-label" style="margin-bottom: 0;">Perfil de Hora Técnica *</label>
+                <a href="configuracoes.html" title="Gerenciar valores de hora técnica nas configurações" style="font-size: 0.75rem; color: var(--azul-trufos); text-decoration: none;">⚙️ Gerenciar HT</a>
+              </div>
+              <select id="perfil_ht_id" required class="form-input" style="margin-top: 5px;" onchange="aoSelecionarPerfilHT()">
+                <option value="">Carregando perfis...</option>
+              </select>
+              <!-- Campo oculto para guardar o valor hora da seleção -->
+              <input type="hidden" id="valor_hora_tecnica" value="0" />
             </div>
 
             <div class="form-group">
@@ -127,7 +126,7 @@
               id="valor"
               required
               class="form-input"
-              value="100.00"
+              value="0.00"
               style="font-weight: bold; color: #059669"
             />
           </div>
