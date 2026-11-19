@@ -91,25 +91,16 @@
             </div>
           </div>
 
-          <!-- Linha 2: Fornecedor e Chave NF-e -->
-          <div class="form-row" style="margin-top: 12px">
-            <div>
-              <label class="form-label">Fornecedor Principal</label>
-              <select id="fornecedor_id" class="form-input">
-                <option value="">Selecione um fornecedor...</option>
-                <!-- Preenchido via JS -->
-              </select>
-            </div>
-            <div>
-              <label class="form-label">Última Chave NF-e (44 dígitos)</label>
-              <input
-                type="text"
-                id="chave_nfe_ultima_entrada"
-                class="form-input"
-                placeholder="Ex: 4324... (Opcional)"
-                maxlength="44"
-              />
-            </div>
+          <!-- Linha 2: Chave NF-e -->
+          <div style="margin-top: 12px">
+            <label class="form-label">Última Chave NF-e (44 dígitos)</label>
+            <input
+              type="text"
+              id="chave_nfe_ultima_entrada"
+              class="form-input"
+              placeholder="Ex: 4324... (Opcional)"
+              maxlength="44"
+            />
           </div>
 
           <!-- Bloco de Custos e Formação de Preço -->
@@ -314,7 +305,6 @@
                 </tr>
               </thead>
               <tbody id="tabelaVinculoFornecedores">
-                <!-- Preenchido dinamicamente ao abrir o produto -->
                 <tr>
                   <td
                     colspan="3"

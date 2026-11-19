@@ -1,8 +1,9 @@
 const WEBHOOK_BASE = "https://n8n.trufos.com.br/webhook";
+let listaFornecedoresCache = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarProdutos();
-  carregarFornecedoresSelect();
+  carregarFornecedoresCache();
   configurarCalculoAutomatico();
 
   const filtroInput = document.getElementById("filtroProduto");
@@ -57,24 +58,28 @@ async function carregarProdutos() {
   }
 }
 
-// 2. Carregar Fornecedores para o Select
-async function carregarFornecedoresSelect() {
+// 2. Carregar Fornecedores em cache para a tabela De-Para
+async function carregarFornecedoresCache() {
   try {
     const response = await fetch(`${WEBHOOK_BASE}/fornecedores-listar`);
-    const fornecedores = await response.json();
-    const select = document.getElementById("fornecedor_id");
-
-    if (select && fornecedores) {
-      fornecedores.forEach((f) => {
-        const opt = document.createElement("option");
-        opt.value = f.id;
-        opt.textContent = f.nome_fantasia || f.razao_social;
-        select.appendChild(opt);
-      });
-    }
+    const text = await response.text();
+    const dados = text ? JSON.parse(text) : [];
+    const lista = Array.isArray(dados) ? dados : dados.data || [];
+    listaFornecedoresCache = lista.filter((f) => f && f.id);
   } catch (e) {
-    console.error("Erro ao carregar select de fornecedores:", e);
+    console.error("Erro ao carregar lista de fornecedores:", e);
+    listaFornecedoresCache = [];
   }
+}
+
+function montarOptionsFornecedores(selectedId = "") {
+  let options = '<option value="">Selecione...</option>';
+  listaFornecedoresCache.forEach((f) => {
+    const nome = f.nome_fantasia || f.razao_social || `Fornecedor #${f.id}`;
+    const isSelected = String(f.id) === String(selectedId) ? "selected" : "";
+    options += `<option value="${f.id}" ${isSelected}>${nome}</option>`;
+  });
+  return options;
 }
 
 // 3. Precificação Inteligente Automática
@@ -136,11 +141,11 @@ async function gerarCodigoSequencial() {
     return `P-${String(proximoNum).padStart(11, "0")}`;
   } catch (e) {
     console.error("Erro ao gerar código sequencial:", e);
-    // Fallback seguro baseado em tempo caso falhe a rede
     const fallbackNum = Math.floor(Date.now() / 1000) % 100000;
     return `P-${String(fallbackNum).padStart(11, "0")}`;
   }
 }
+
 // 5. Funções do Modal
 window.abrirModalNovoProduto = async function () {
   document.getElementById("tituloModalProduto").innerText =
@@ -148,7 +153,11 @@ window.abrirModalNovoProduto = async function () {
   document.getElementById("formProduto").reset();
   document.getElementById("produtoIdEdicao").value = "";
 
-  // Busca o próximo código sequencial no banco
+  const tbodyDePara = document.getElementById("tabelaVinculoFornecedores");
+  if (tbodyDePara) {
+    tbodyDePara.innerHTML = `<tr><td colspan="3" style="padding: 8px; text-align: center; color: #64748b;">Nenhum código de fornecedor vinculado.</td></tr>`;
+  }
+
   const proximoCodigo = await gerarCodigoSequencial();
   document.getElementById("codigo").value = proximoCodigo;
 
@@ -177,7 +186,6 @@ window.editarProduto = function (prod) {
     prod.comissao_percentual || "0.00";
   document.getElementById("margem_lucro").value = prod.margem_lucro || "30.00";
   document.getElementById("preco_venda").value = prod.preco_venda || "0.00";
-  document.getElementById("fornecedor_id").value = prod.fornecedor_id || "";
   document.getElementById("chave_nfe_ultima_entrada").value =
     prod.chave_nfe_ultima_entrada || "";
 
@@ -187,8 +195,7 @@ window.editarProduto = function (prod) {
 
 // 6. Salvar Produto
 window.salvarProduto = async function (event) {
-  event.preventDefault(); // Impede o recarregamento da página
-  console.log("-> Função salvarProduto foi acionada com sucesso!");
+  event.preventDefault();
 
   const codigoInput = document.getElementById("codigo");
   const descricaoInput = document.getElementById("descricao");
@@ -218,17 +225,12 @@ window.salvarProduto = async function (event) {
       : "",
   };
 
-  console.log("-> Dados montados para envio:", dados);
-
   try {
-    console.log(`-> Disparando fetch para: ${WEBHOOK_BASE}/produto-salvar`);
     const response = await fetch(`${WEBHOOK_BASE}/produto-salvar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados),
     });
-
-    console.log("-> Resposta recebida do servidor:", response.status);
 
     if (response.ok) {
       fecharModalProduto();
@@ -237,7 +239,7 @@ window.salvarProduto = async function (event) {
       alert("Erro ao salvar o produto no servidor.");
     }
   } catch (e) {
-    console.error("-> Erro crítico na requisição fetch:", e);
+    console.error("Erro crítico na requisição fetch:", e);
     alert("Erro de conexão ao salvar. Verifique o console.");
   }
 };
@@ -263,11 +265,14 @@ window.excluirProduto = async function (id) {
 };
 
 // 8. Gerenciamento do De-Para de Fornecedores dentro do Modal
-window.adicionarVinculoFornecedor = function () {
+window.adicionarVinculoFornecedor = async function () {
   const tbody = document.getElementById("tabelaVinculoFornecedores");
   if (!tbody) return;
 
-  // Remove a mensagem de "nenhum vínculo" se for a primeira linha
+  if (listaFornecedoresCache.length === 0) {
+    await carregarFornecedoresCache();
+  }
+
   if (tbody.innerHTML.includes("Nenhum código")) {
     tbody.innerHTML = "";
   }
@@ -276,8 +281,7 @@ window.adicionarVinculoFornecedor = function () {
   tr.innerHTML = `
         <td style="padding: 6px;">
             <select class="form-control" style="width: 100%; padding: 4px; font-size: 0.85rem;">
-                <!-- Populado dinamicamente ou via select existente -->
-                ${document.getElementById("fornecedor_id") ? document.getElementById("fornecedor_id").innerHTML : '<option value="">Selecione...</option>'}
+                ${montarOptionsFornecedores()}
             </select>
         </td>
         <td style="padding: 6px;">
