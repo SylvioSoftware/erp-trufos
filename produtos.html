@@ -52,7 +52,7 @@
 
     <!-- MODAL DE PRODUTO -->
     <div id="modalProduto" class="modal-overlay">
-      <div class="modal-card" style="max-width: 680px">
+      <div class="modal-card" style="max-width: 720px">
         <h2
           id="tituloModalProduto"
           style="
@@ -66,6 +66,16 @@
 
         <form id="formProduto" onsubmit="salvarProduto(event)">
           <input type="hidden" id="produtoIdEdicao" />
+
+          <!-- Campos fiscais mantidos no form para envio e edição -->
+          <input type="hidden" id="ncm" value="" />
+          <input type="hidden" id="origem" value="0" />
+          <input type="hidden" id="unidade_medida" value="UN" />
+          <input type="hidden" id="cfop" value="" />
+          <input type="hidden" id="cst_csosn" value="" />
+          <input type="hidden" id="cest" value="" />
+          <input type="hidden" id="peso_liquido" value="0.000" />
+          <input type="hidden" id="peso_bruto" value="0.000" />
 
           <!-- Linha 1: Código e Descrição -->
           <div class="form-row">
@@ -91,16 +101,46 @@
             </div>
           </div>
 
-          <!-- Linha 2: Chave NF-e -->
-          <div style="margin-top: 12px">
-            <label class="form-label">Última Chave NF-e (44 dígitos)</label>
-            <input
-              type="text"
-              id="chave_nfe_ultima_entrada"
-              class="form-input"
-              placeholder="Ex: 4324... (Opcional)"
-              maxlength="44"
-            />
+          <!-- Linha 2: Chave NF-e e Botão de Informações Fiscais -->
+          <div class="form-row" style="margin-top: 12px; align-items: end">
+            <div>
+              <label class="form-label">Última Chave NF-e (44 dígitos)</label>
+              <input
+                type="text"
+                id="chave_nfe_ultima_entrada"
+                class="form-input"
+                placeholder="Ex: 4324... (Opcional)"
+                maxlength="44"
+              />
+            </div>
+            <div>
+              <label class="form-label">Tributação / Emissão NF-e</label>
+              <button
+                type="button"
+                onclick="abrirModalInformacoesFiscais()"
+                style="
+                  width: 100%;
+                  background: #f1f5f9;
+                  color: #1e293b;
+                  border: 1px solid #cbd5e1;
+                  padding: 10px 14px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
+                <span>📄 Informações Fiscais</span>
+                <small
+                  id="resumoFiscalBadge"
+                  style="color: #64748b; font-weight: 500"
+                >
+                  NCM: -
+                </small>
+              </button>
+            </div>
           </div>
 
           <!-- Bloco de Custos e Formação de Preço -->
@@ -247,6 +287,15 @@
                 value="0.00"
                 style="font-weight: bold; font-size: 1.1rem; color: #059669"
               />
+              <small
+                id="alertaPrecoAbaixo"
+                style="
+                  display: none;
+                  margin-top: 6px;
+                  color: #b91c1c;
+                  font-weight: 600;
+                "
+              ></small>
             </div>
           </div>
 
@@ -273,7 +322,7 @@
                   color: var(--azul-logo-trufos);
                   margin: 0;
                 "
-                >Códigos deste Produto por Fornecedor (De-Para)</label
+                >Códigos e Descrições por Fornecedor (De-Para)</label
               >
               <button
                 type="button"
@@ -297,9 +346,12 @@
             >
               <thead>
                 <tr style="background: #f1f5f9; text-align: left">
-                  <th style="padding: 6px">Fornecedor</th>
-                  <th style="padding: 6px">Cód. no Fornecedor</th>
-                  <th style="padding: 6px; width: 60px; text-align: center">
+                  <th style="padding: 6px; width: 32%">Fornecedor</th>
+                  <th style="padding: 6px; width: 24%">Cód. no Fornecedor</th>
+                  <th style="padding: 6px; width: 32%">
+                    Descrição no Fornecedor
+                  </th>
+                  <th style="padding: 6px; width: 12%; text-align: center">
                     Ações
                   </th>
                 </tr>
@@ -307,7 +359,7 @@
               <tbody id="tabelaVinculoFornecedores">
                 <tr>
                   <td
-                    colspan="3"
+                    colspan="4"
                     style="padding: 8px; text-align: center; color: #64748b"
                   >
                     Nenhum código de fornecedor vinculado.
@@ -361,7 +413,184 @@
       </div>
     </div>
 
-    <script type="module" src="js/produtos/produtos-main.js"></script>
+    <!-- MODAL SOBREPOSTO: INFORMAÇÕES FISCAIS (NF-e) -->
+    <div id="modalInformacoesFiscais" class="modal-overlay modal-sobreposto">
+      <div class="modal-card" style="max-width: 600px">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+          "
+        >
+          <h2 style="margin: 0; color: var(--azul-logo-trufos)">
+            📄 Informações Fiscais (NF-e)
+          </h2>
+          <button
+            type="button"
+            onclick="fecharModalInformacoesFiscais()"
+            style="
+              background: none;
+              border: none;
+              font-size: 20px;
+              cursor: pointer;
+            "
+          >
+            ✖
+          </button>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label class="form-label">NCM (8 dígitos)</label>
+            <input
+              type="text"
+              id="fiscal_ncm"
+              class="form-input"
+              maxlength="10"
+              placeholder="Ex: 84192000"
+            />
+          </div>
+          <div>
+            <label class="form-label">Origem da Mercadoria</label>
+            <select id="fiscal_origem" class="form-input">
+              <option value="0">0 - Nacional</option>
+              <option value="1">1 - Estrangeira (Importação direta)</option>
+              <option value="2">
+                2 - Estrangeira (Adquirida no mercado interno)
+              </option>
+              <option value="3">3 - Nacional (Conteúdo importado > 40%)</option>
+              <option value="4">
+                4 - Nacional (Processos produtivos básicos)
+              </option>
+              <option value="5">
+                5 - Nacional (Conteúdo importado <= 40%)
+              </option>
+              <option value="6">
+                6 - Estrangeira (Importação direta s/ similar)
+              </option>
+              <option value="7">
+                7 - Estrangeira (Mercado interno s/ similar)
+              </option>
+              <option value="8">8 - Nacional (Conteúdo importado > 70%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 12px">
+          <div>
+            <label class="form-label">CFOP Padrão</label>
+            <input
+              type="text"
+              id="fiscal_cfop"
+              class="form-input"
+              maxlength="6"
+              placeholder="Ex: 5102 ou 5405"
+            />
+          </div>
+          <div>
+            <label class="form-label">CST / CSOSN</label>
+            <input
+              type="text"
+              id="fiscal_cst_csosn"
+              class="form-input"
+              maxlength="6"
+              placeholder="Ex: 102, 500 ou 00"
+            />
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 12px">
+          <div>
+            <label class="form-label">Unidade Comercial (UN)</label>
+            <input
+              type="text"
+              id="fiscal_unidade_medida"
+              class="form-input"
+              maxlength="10"
+              placeholder="Ex: UN, PC, CX"
+            />
+          </div>
+          <div>
+            <label class="form-label">CEST</label>
+            <input
+              type="text"
+              id="fiscal_cest"
+              class="form-input"
+              maxlength="10"
+              placeholder="Ex: 2001400"
+            />
+          </div>
+        </div>
+
+        <div class="form-row" style="margin-top: 12px">
+          <div>
+            <label class="form-label">Peso Líquido (kg)</label>
+            <input
+              type="number"
+              step="0.001"
+              id="fiscal_peso_liquido"
+              class="form-input"
+              value="0.000"
+            />
+          </div>
+          <div>
+            <label class="form-label">Peso Bruto (kg)</label>
+            <input
+              type="number"
+              step="0.001"
+              id="fiscal_peso_bruto"
+              class="form-input"
+              value="0.000"
+            />
+          </div>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+          "
+        >
+          <button
+            type="button"
+            onclick="fecharModalInformacoesFiscais()"
+            style="
+              background: #e2e8f0;
+              border: none;
+              padding: 10px 18px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: 600;
+            "
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onclick="aplicarInformacoesFiscais()"
+            style="
+              background: var(--azul-trufos);
+              color: white;
+              border: none;
+              padding: 10px 18px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: 600;
+            "
+          >
+            Confirmar Dados Fiscais
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/produtos/produtos-main.js?v=3"></script>
     <script src="js/core/sidebar.js"></script>
   </body>
 </html>
