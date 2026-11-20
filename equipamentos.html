@@ -18,23 +18,54 @@
       <header class="header-erp">
         <div class="header-text-erp">
           <h1>Parque de Equipamentos</h1>
-          <p>Gestão de tipos, fabricantes, modelos e equipamentos instalados nos clientes</p>
+          <p>
+            Gestão de tipos, marcas, modelos e equipamentos instalados nos
+            clientes
+          </p>
         </div>
       </header>
 
-      <div class="page-header-actions" style="display: flex; gap: 15px; align-items: center; justify-content: space-between; margin-top: 20px; margin-bottom: 20px;">
+      <div
+        class="page-header-actions"
+        style="
+          display: flex;
+          gap: 15px;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 20px;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        "
+      >
         <input
           type="text"
           id="filtroEquipamento"
-          placeholder="🔍 Buscar por cliente, modelo, série ou patrimônio..."
+          placeholder="🔍 Buscar por cliente, tipo, marca, modelo, série ou patrimônio..."
           class="form-input"
-          style="width: 350px;"
+          style="width: 360px; max-width: 100%"
         />
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-secundario" onclick="abrirModalModelos()" style="background: #475569; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-            ⚙️ Gerenciar Marcas/Modelos
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+          <button
+            type="button"
+            class="btn-secundario"
+            onclick="abrirModalModelos()"
+            style="
+              background: #475569;
+              color: white;
+              border: none;
+              padding: 10px 15px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: 600;
+            "
+          >
+            ⚙️ Gerenciar Tipos/Marcas/Modelos
           </button>
-          <button class="btn-principal" onclick="abrirModalNovoParque()">
+          <button
+            type="button"
+            class="btn-principal"
+            onclick="abrirModalNovoParque()"
+          >
             + Novo Equipamento no Cliente
           </button>
         </div>
@@ -45,21 +76,21 @@
           <thead>
             <tr>
               <th>Cliente</th>
-              <th>Equipamento (Modelo / Marca)</th>
+              <th>Equipamento (Tipo / Marca / Modelo)</th>
               <th>Nº de Série</th>
               <th>Patrimônio / TAG</th>
               <th>⏱️ Tempo Médio (HT)</th>
-              <th style="width: 150px; text-align: center;">Ações</th>
+              <th style="width: 150px; text-align: center">Ações</th>
             </tr>
           </thead>
           <tbody id="listaEquipamentosTabela">
             <tr>
-              <td>Hospital São Lucas</td>
-              <td>Autoclave HS 22L (Sercon)</td>
-              <td>SN123456</td>
-              <td>PAT-0089</td>
-              <td><strong>2.5h</strong> (Média cadastrada/Clockify)</td>
-              <td style="text-align: center;">...</td>
+              <td
+                colspan="6"
+                style="text-align: center; padding: 20px; color: #64748b"
+              >
+                Carregando parque instalado...
+              </td>
             </tr>
           </tbody>
         </table>
@@ -68,53 +99,406 @@
 
     <!-- MODAL DE PARQUE INSTALADO -->
     <div id="modalParque" class="modal-overlay">
-      <div class="modal-card" style="max-width: 600px;">
-        <h2 id="tituloModalParque" style="margin-top: 0; color: var(--azul-logo-trufos); margin-bottom: 25px;">
+      <div class="modal-card" style="max-width: 600px">
+        <h2
+          id="tituloModalParque"
+          style="
+            margin-top: 0;
+            color: var(--azul-logo-trufos);
+            margin-bottom: 25px;
+          "
+        >
           Vincular Equipamento ao Cliente
         </h2>
 
         <form id="formParque" onsubmit="salvarParque(event)">
           <input type="hidden" id="parqueIdEdicao" />
 
-          <div class="form-group" style="margin-bottom: 15px;">
+          <div class="form-group" style="margin-bottom: 15px">
             <label class="form-label">Cliente *</label>
             <select id="cliente_id" required class="form-input">
               <option value="">Selecione o cliente...</option>
             </select>
           </div>
 
-          <div class="form-group" style="margin-bottom: 15px;">
-            <label class="form-label">Modelo do Equipamento (com Marca e Tipo) *</label>
+          <div class="form-group" style="margin-bottom: 15px">
+            <label class="form-label"
+              >Equipamento (Tipo / Marca / Modelo) *</label
+            >
             <select id="modelo_id" required class="form-input">
               <option value="">Selecione o modelo...</option>
             </select>
+            <small
+              id="resumoModeloSelecionado"
+              style="
+                display: block;
+                margin-top: 6px;
+                color: #475569;
+                font-size: 0.82rem;
+              "
+            >
+              Tipo: - | Marca: - | Modelo: - | HT Médio: -
+            </small>
           </div>
 
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+          <div
+            class="form-row"
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 15px;
+              margin-bottom: 15px;
+            "
+          >
             <div>
               <label class="form-label">Número de Série</label>
-              <input type="text" id="numero_serie" class="form-input" placeholder="Ex: SN123456" />
+              <input
+                type="text"
+                id="numero_serie"
+                class="form-input"
+                placeholder="Ex: SN123456"
+              />
             </div>
             <div>
               <label class="form-label">Patrimônio / TAG</label>
-              <input type="text" id="patrimonio_tag" class="form-input" placeholder="Ex: PAT-0089" />
+              <input
+                type="text"
+                id="patrimonio_tag"
+                class="form-input"
+                placeholder="Ex: PAT-0089"
+              />
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom: 15px;">
+          <div class="form-group" style="margin-bottom: 15px">
             <label class="form-label">Observações Técnicas</label>
-            <textarea id="observacoes" class="form-input" rows="3" placeholder="Detalhes de localização, estado de conservação..."></textarea>
+            <textarea
+              id="observacoes"
+              class="form-input"
+              rows="3"
+              placeholder="Detalhes de localização, estado de conservação..."
+            ></textarea>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <button type="button" onclick="fecharModalParque()" style="background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 10px;
+              margin-top: 25px;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 20px;
+            "
+          >
+            <button
+              type="button"
+              onclick="fecharModalParque()"
+              style="
+                background: #e2e8f0;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
               Cancelar
             </button>
-            <button type="submit" style="background: var(--azul-trufos); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+            <button
+              type="submit"
+              style="
+                background: var(--azul-trufos);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
               Salvar Equipamento
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE TIPOS, MARCAS E MODELOS -->
+    <div id="modalModelos" class="modal-overlay" style="z-index: 1100">
+      <div
+        class="modal-card"
+        style="max-width: 800px; max-height: 90vh; overflow-y: auto"
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h2 style="margin: 0; color: var(--azul-logo-trufos)">
+            Gerenciar Tipos, Marcas e Modelos
+          </h2>
+          <button
+            type="button"
+            onclick="fecharModalModelos()"
+            style="
+              background: transparent;
+              border: none;
+              font-size: 1.3rem;
+              cursor: pointer;
+              color: #64748b;
+            "
+          >
+            ✕
+          </button>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+          "
+        >
+          <!-- 1º: Novo Tipo -->
+          <div
+            style="
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              padding: 12px;
+            "
+          >
+            <label class="form-label" style="margin-bottom: 8px"
+              >Novo Tipo</label
+            >
+            <div style="display: flex; gap: 8px">
+              <input
+                type="text"
+                id="novo_tipo_nome"
+                class="form-input"
+                placeholder="Ex: Autoclave, Seladora, Destiladora..."
+              />
+              <button
+                type="button"
+                onclick="salvarNovoTipo()"
+                style="
+                  background: #0f766e;
+                  color: white;
+                  border: none;
+                  padding: 8px 14px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                  white-space: nowrap;
+                "
+              >
+                + Tipo
+              </button>
+            </div>
+          </div>
+
+          <!-- 2º: Nova Marca -->
+          <div
+            style="
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              padding: 12px;
+            "
+          >
+            <label class="form-label" style="margin-bottom: 8px"
+              >Nova Marca</label
+            >
+            <div style="display: flex; gap: 8px">
+              <input
+                type="text"
+                id="novo_marca_nome"
+                class="form-input"
+                placeholder="Ex: Sercon, Baumer, Tuttnauer..."
+              />
+              <button
+                type="button"
+                onclick="salvarNovaMarca()"
+                style="
+                  background: #0f766e;
+                  color: white;
+                  border: none;
+                  padding: 8px 14px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-weight: 600;
+                  white-space: nowrap;
+                "
+              >
+                + Marca
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3º: Modelo -->
+        <form
+          id="formModelo"
+          onsubmit="salvarModelo(event)"
+          style="
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+          "
+        >
+          <input type="hidden" id="modeloIdEdicao" />
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 12px;
+            "
+          >
+            <strong id="tituloFormModelo" style="color: #0f172a">
+              Novo Modelo de Equipamento
+            </strong>
+            <button
+              type="button"
+              onclick="limparFormModelo()"
+              style="
+                background: #e2e8f0;
+                border: none;
+                padding: 4px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8rem;
+                font-weight: 600;
+              "
+            >
+              Limpar
+            </button>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <div>
+              <label class="form-label">Tipo *</label>
+              <select id="modelo_tipo_id" required class="form-input">
+                <option value="">Selecione o tipo...</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Marca *</label>
+              <select id="modelo_marca_id" required class="form-input">
+                <option value="">Selecione a marca...</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 2fr 1fr auto;
+              gap: 12px;
+              align-items: end;
+            "
+          >
+            <div>
+              <label class="form-label">Nome do Modelo *</label>
+              <input
+                type="text"
+                id="modelo_nome"
+                required
+                class="form-input"
+                placeholder="Ex: HS 22L Digital..."
+              />
+            </div>
+            <div>
+              <label class="form-label">Tempo Médio HT (h)</label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                id="modelo_horas_tecnicas_media"
+                class="form-input"
+                placeholder="Ex: 2.5"
+              />
+            </div>
+            <button
+              type="submit"
+              style="
+                background: var(--azul-trufos);
+                color: white;
+                border: none;
+                padding: 10px 18px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                height: 40px;
+              "
+            >
+              Salvar Modelo
+            </button>
+          </div>
+        </form>
+
+        <div class="card-tabela" style="margin: 0">
+          <table class="tabela-dados">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>⏱️ HT Médio</th>
+                <th style="width: 140px; text-align: center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="listaModelosTabela">
+              <tr>
+                <td
+                  colspan="5"
+                  style="text-align: center; padding: 15px; color: #64748b"
+                >
+                  Carregando modelos...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+          "
+        >
+          <button
+            type="button"
+            onclick="fecharModalModelos()"
+            style="
+              background: #334155;
+              color: white;
+              border: none;
+              padding: 9px 18px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: 600;
+            "
+          >
+            Fechar
+          </button>
+        </div>
       </div>
     </div>
 
