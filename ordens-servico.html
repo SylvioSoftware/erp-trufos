@@ -12,155 +12,97 @@
     <script src="js/core/auth.js"></script>
   </head>
   <body>
-    <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
-
-    <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content">
       <header class="header-erp">
         <div class="header-text-erp">
           <h1>Gestão de Ordens de Serviço</h1>
-          <p
-            id="os-subtitulo-pagina"
-            style="margin: 4px 0 0; color: #64748b; font-size: 0.92em"
-          >
+          <p id="os-subtitulo-pagina">
             Acompanhamento de atendimentos pendentes, em execução e concluídos
           </p>
         </div>
       </header>
 
-      <!-- ========================================================= -->
-      <!-- VISÃO 1: LISTA INICIAL DE ORDENS DE SERVIÇO (PADRÃO)      -->
-      <!-- ========================================================= -->
-      <section id="os-view-lista" class="os-container">
-        <div class="card" style="margin-bottom: 20px">
-          <div
-            style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: 12px;
-              align-items: center;
-              justify-content: space-between;
-            "
-          >
-            <!-- Busca rápida -->
-            <div style="flex: 1; min-width: 240px">
-              <input
-                type="text"
-                id="os-busca-lista"
-                class="form-control"
-                placeholder="🔍 Buscar por nº OS, cliente, equipamento ou nº de série..."
-              />
-            </div>
+      <!-- VISÃO 1: LISTA -->
+      <section id="os-view-lista" class="os-container" style="display: block">
+        <div class="card os-filtros-card">
+          <!-- Linha 1: Busca ampla + Botão Nova OS -->
+          <div class="os-filtros-linha-1">
+            <input
+              type="text"
+              id="os-busca-lista"
+              class="form-control os-busca-input"
+              placeholder="🔍 Buscar por nº OS, cliente, equipamento ou nº de série..."
+            />
 
-            <!-- Filtro rápido de status -->
-            <div style="min-width: 210px">
-              <select id="os-filtro-status" class="form-control">
-                <option value="TODOS" selected>📋 Todos (Pendentes primeiro)</option>
-                <option value="PENDENTES">⏳ Pendentes / Em Andamento</option>
-                <option value="CONCLUIDAS">✅ Concluídas / Finalizadas</option>
-                <option value="CANCELADAS">❌ Canceladas</option>
-              </select>
-            </div>
-
-            <!-- Botão Nova OS -->
-            <div>
-              <button
-                type="button"
-                id="btn-nova-os"
-                class="btn-primary"
-                style="padding: 10px 18px; font-weight: 600"
-              >
-                + Nova Ordem de Serviço
-              </button>
-            </div>
+            <button
+              type="button"
+              id="btn-nova-os"
+              class="btn-primary os-btn-nova"
+            >
+              + Nova Ordem de Serviço
+            </button>
           </div>
 
-          <!-- Chips rápidos de resumo / filtro -->
-          <div
-            id="os-resumo-badges"
-            style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-              margin-top: 14px;
-              padding-top: 12px;
-              border-top: 1px solid #f1f5f9;
-              font-size: 0.85em;
-            "
-          >
-            <span
-              data-filtro-chip="PENDENTES"
-              style="
-                cursor: pointer;
-                padding: 4px 12px;
-                border-radius: 999px;
-                background: #fef3c7;
-                color: #92400e;
-                font-weight: 600;
-              "
+          <!-- Linha 2: Período (De / Até) + Status + Ordenação -->
+          <div class="os-filtros-linha-2">
+            <div class="os-filtro-datas">
+              <span class="os-filtro-label">De:</span>
+              <input
+                type="date"
+                id="os-data-inicio"
+                class="form-control os-input-data"
+              />
+              <span class="os-filtro-label">Até:</span>
+              <input
+                type="date"
+                id="os-data-fim"
+                class="form-control os-input-data"
+              />
+              <button
+                type="button"
+                id="btn-limpar-datas-os"
+                class="btn-secondary os-btn-limpar-data"
+                title="Limpar datas"
+              >
+                ✕
+              </button>
+            </div>
+
+            <select id="os-filtro-status" class="form-control os-select-filtro">
+              <option value="TODOS" selected>📋 Todos (Pendentes 1º)</option>
+              <option value="PENDENTES">⏳ Pendentes / Em Andamento</option>
+              <option value="CONCLUIDAS">✅ Concluídas / Finalizadas</option>
+              <option value="CANCELADAS">❌ Canceladas</option>
+            </select>
+
+            <select
+              id="os-ordenacao-lista"
+              class="form-control os-select-filtro"
             >
-              ⏳ Pendentes: <strong id="count-os-pendentes">0</strong>
-            </span>
-            <span
-              data-filtro-chip="CONCLUIDAS"
-              style="
-                cursor: pointer;
-                padding: 4px 12px;
-                border-radius: 999px;
-                background: #dcfce7;
-                color: #166534;
-                font-weight: 600;
-              "
-            >
-              ✅ Concluídas: <strong id="count-os-concluidas">0</strong>
-            </span>
-            <span
-              data-filtro-chip="TODOS"
-              style="
-                cursor: pointer;
-                padding: 4px 12px;
-                border-radius: 999px;
-                background: #e2e8f0;
-                color: #334155;
-                font-weight: 600;
-              "
-            >
-              📋 Total: <strong id="count-os-total">0</strong>
-            </span>
+              <option value="STATUS_DATA" selected>
+                Ordenar: Pendentes + Recentes
+              </option>
+              <option value="MAIS_ANTIGAS">
+                Ordenar: Mais antigas primeiro
+              </option>
+              <option value="CLIENTE_AZ">Ordenar: Cliente (A-Z)</option>
+            </select>
           </div>
         </div>
 
-        <!-- Tabela de Ordens de Serviço -->
-        <div class="card" style="padding: 0; overflow: hidden">
-          <div style="overflow-x: auto">
-            <table
-              style="
-                width: 100%;
-                border-collapse: collapse;
-                background: #fff;
-                text-align: left;
-              "
-            >
+        <!-- Tabela -->
+        <div class="card os-tabela-card">
+          <div class="os-tabela-scroll">
+            <table class="os-tabela">
               <thead>
-                <tr
-                  style="
-                    background: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                    font-size: 0.88em;
-                    color: #475569;
-                  "
-                >
-                  <th style="padding: 12px 14px; width: 95px">OS Nº</th>
-                  <th style="padding: 12px 14px; width: 115px">Data</th>
-                  <th style="padding: 12px 14px">Cliente</th>
-                  <th style="padding: 12px 14px">Equipamento / Série</th>
-                  <th style="padding: 12px 14px; width: 155px">Status</th>
-                  <th style="padding: 12px 14px; width: 125px">Valor Total</th>
-                  <th
-                    style="padding: 12px 14px; width: 185px; text-align: center"
-                  >
-                    Ações
-                  </th>
+                <tr>
+                  <th style="width: 85px">OS Nº</th>
+                  <th style="width: 105px">Data</th>
+                  <th>Cliente</th>
+                  <th>Equipamento / Série</th>
+                  <th style="width: 145px">Status</th>
+                  <th style="width: 120px">Tempo Aberto</th>
+                  <th style="width: 110px; text-align: center">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-lista-os">
@@ -175,28 +117,61 @@
               </tbody>
             </table>
           </div>
+
+          <div id="os-paginacao-rodape" class="os-paginacao-rodape">
+            <span id="os-info-exibicao" class="os-info-exibicao"></span>
+            <div class="os-paginacao-botoes">
+              <button
+                type="button"
+                id="btn-ver-mais-os"
+                class="btn-secondary os-btn-paginacao"
+              >
+                Ver mais (+25)
+              </button>
+              <button
+                type="button"
+                id="btn-ver-todas-os"
+                class="btn-secondary os-btn-paginacao"
+              >
+                Ver todas
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Caixas de Resumo -->
+        <div id="os-resumo-badges" class="os-resumo-badges">
+          <div
+            data-filtro-chip="PENDENTES"
+            class="card os-badge-card os-badge-pendentes"
+          >
+            <span>⏳ Pendentes</span>
+            <strong id="count-os-pendentes">0</strong>
+          </div>
+
+          <div
+            data-filtro-chip="CONCLUIDAS"
+            class="card os-badge-card os-badge-concluidas"
+          >
+            <span>✅ Concluídas</span>
+            <strong id="count-os-concluidas">0</strong>
+          </div>
+
+          <div
+            data-filtro-chip="TODOS"
+            class="card os-badge-card os-badge-total"
+          >
+            <span>📋 Total</span>
+            <strong id="count-os-total">0</strong>
+          </div>
         </div>
       </section>
 
-      <!-- ========================================================= -->
-      <!-- VISÃO 2: FORMULÁRIO DE CRIAÇÃO / EDIÇÃO DE OS             -->
-      <!-- ========================================================= -->
+      <!-- VISÃO 2: FORMULÁRIO -->
       <section id="os-view-form" class="os-container" style="display: none">
-        <!-- Barra Superior do Formulário -->
-        <div
-          class="card"
-          style="
-            margin-bottom: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: space-between;
-          "
-        >
-          <div
-            style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap"
-          >
+        <!-- Barra superior do formulário -->
+        <div class="card os-form-topbar">
+          <div class="os-form-topbar-esq">
             <button
               type="button"
               id="btn-voltar-lista-os"
@@ -204,35 +179,22 @@
             >
               ← Voltar para Lista
             </button>
-            <span
-              id="os-badge-numero"
-              style="
-                font-weight: 700;
-                font-size: 1.05em;
-                color: #1e293b;
-                background: #f1f5f9;
-                padding: 6px 12px;
-                border-radius: 6px;
-              "
-            >
+            <span id="os-badge-numero" class="os-badge-numero">
               Nova Ordem de Serviço
             </span>
+            <button
+              type="button"
+              id="btn-abrir-historico-os"
+              class="btn-secondary"
+            >
+              🕒 Histórico & Datas
+            </button>
           </div>
 
-          <div
-            style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"
-          >
-            <div>
-              <label
-                for="os-status"
-                style="font-size: 0.8em; color: #64748b; display: block"
-                >Status da OS</label
-              >
-              <select
-                id="os-status"
-                class="form-control"
-                style="min-width: 185px"
-              >
+          <div class="os-form-topbar-dir">
+            <div class="os-topbar-campo">
+              <label for="os-status">Status da OS</label>
+              <select id="os-status" class="form-control">
                 <option value="ABERTA">Aberta / Pendente</option>
                 <option value="EM_ANDAMENTO">Em Andamento</option>
                 <option value="AGUARDANDO_PECA">Aguardando Peça</option>
@@ -244,896 +206,612 @@
               </select>
             </div>
 
-            <div>
-              <label
-                for="os-data-abertura"
-                style="font-size: 0.8em; color: #64748b; display: block"
-                >Abertura</label
-              >
-              <input type="date" id="os-data-abertura" class="form-control" />
+            <div class="os-topbar-campo">
+              <label for="os-data-abertura">Abertura (Chamado)</label>
+              <input
+                type="datetime-local"
+                id="os-data-abertura"
+                class="form-control"
+              />
             </div>
 
-            <div>
-              <label
-                for="os-data-agendada"
-                style="font-size: 0.8em; color: #64748b; display: block"
-                >Agendamento</label
-              >
-              <input type="date" id="os-data-agendada" class="form-control" />
+            <div class="os-topbar-campo">
+              <label for="os-data-agendada">Agendamento</label>
+              <input
+                type="datetime-local"
+                id="os-data-agendada"
+                class="form-control"
+              />
             </div>
           </div>
         </div>
 
-        <!-- Abas de Navegação da OS -->
-        <div class="os-tabs">
-          <button
-            type="button"
-            class="tab-btn active"
-            data-target="aba-cliente"
-          >
-            1 - Cliente
-          </button>
-          <button type="button" class="tab-btn" data-target="aba-equipamento">
-            2 - Equipamento
-          </button>
-          <button type="button" class="tab-btn" data-target="aba-laudo">
-            3 - Laudo & IA
-          </button>
-          <button type="button" class="tab-btn" data-target="aba-financeiro">
-            4 - Produtos e Valores
-          </button>
-          <button type="button" class="tab-btn" data-target="aba-imagens">
-            5 - Imagens
-          </button>
-        </div>
+        <!-- Layout Wizard: Abas Laterais + Conteúdo -->
+        <div class="os-wizard-layout">
+          <div class="os-tabs">
+            <button
+              type="button"
+              class="tab-btn active"
+              data-target="aba-cliente"
+            >
+              1 - Cliente
+            </button>
+            <button type="button" class="tab-btn" data-target="aba-equipamento">
+              2 - Equipamento
+            </button>
+            <button type="button" class="tab-btn" data-target="aba-laudo">
+              3 - Laudo & IA
+            </button>
+            <button type="button" class="tab-btn" data-target="aba-financeiro">
+              4 - Produtos e Valores
+            </button>
+            <button type="button" class="tab-btn" data-target="aba-imagens">
+              5 - Imagens
+            </button>
+          </div>
 
-        <!-- Conteúdo das Abas -->
-        <div class="os-form-content card">
-          <form id="form-os">
-            <input type="hidden" id="os-id" />
+          <div class="os-form-content card">
+            <form id="form-os">
+              <input type="hidden" id="os-id" />
+              <input type="hidden" id="os-cliente-prazo-validade" value="30" />
 
-            <!-- Aba 1: Cliente -->
-            <div id="aba-cliente" class="tab-pane active">
-              <h3>Dados do Cliente</h3>
-
-              <input type="hidden" id="os-cliente-id" />
-
-              <div class="form-group" style="margin-bottom: 20px">
-                <button
-                  type="button"
-                  id="btn-abrir-modal-cliente"
-                  class="btn-primary"
-                  style="
-                    width: 100%;
-                    padding: 12px;
-                    font-size: 1.05em;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                  "
-                >
-                  🔍 Selecionar / Buscar Cliente Cadastrado
-                </button>
+              <!-- Aba 1: Cliente -->
+              <div id="aba-cliente" class="tab-pane active">
+                <h3>Dados do Cliente</h3>
+                <input type="hidden" id="os-cliente-id" />
+                <div class="form-group">
+                  <button
+                    type="button"
+                    id="btn-abrir-modal-cliente"
+                    class="btn-primary os-btn-selecionar-cadastro"
+                  >
+                    🔍 Selecionar / Buscar Cliente Cadastrado
+                  </button>
+                </div>
+                <div class="form-group">
+                  <label>Razão Social</label>
+                  <input
+                    type="text"
+                    id="os-razao-social"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="form-group">
+                  <label>CNPJ / CPF</label>
+                  <input
+                    type="text"
+                    id="os-cnpj"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Telefone</label>
+                  <input
+                    type="text"
+                    id="os-cliente-telefone"
+                    class="form-control"
+                    placeholder="(51) 99999-9999"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Endereço</label>
+                  <input
+                    type="text"
+                    id="os-endereco"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Cidade / UF</label>
+                  <input
+                    type="text"
+                    id="os-cidade"
+                    class="form-control"
+                    readonly
+                  />
+                </div>
+                <div class="os-acoes-aba-cliente">
+                  <button
+                    type="button"
+                    id="btn-ver-contatos"
+                    class="btn-secondary"
+                    disabled
+                  >
+                    👥 Ver Contatos do Cliente
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-historico-cliente-aba"
+                    class="btn-secondary"
+                  >
+                    🕒 Histórico do Cliente
+                  </button>
+                </div>
               </div>
 
-              <div class="form-group">
-                <label>Razão Social</label>
-                <input
-                  type="text"
-                  id="os-razao-social"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>CNPJ / CPF</label>
-                <input type="text" id="os-cnpj" class="form-control" readonly />
-              </div>
-
-              <div class="form-group">
-                <label>Telefone</label>
-                <input
-                  type="text"
-                  id="os-cliente-telefone"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Endereço</label>
-                <input
-                  type="text"
-                  id="os-endereco"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Cidade / UF</label>
-                <input
-                  type="text"
-                  id="os-cidade"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div
-                class="form-row"
-                style="
-                  margin-top: 25px;
-                  align-items: center;
-                  justify-content: flex-start;
-                "
-              >
-                <button
-                  type="button"
-                  id="btn-ver-contatos"
-                  class="btn-secondary"
-                  disabled
-                  style="opacity: 0.6; cursor: not-allowed"
-                >
-                  👥 Ver Contatos do Cliente
-                </button>
-              </div>
-            </div>
-
-            <!-- Aba 2: Equipamento -->
-            <div id="aba-equipamento" class="tab-pane" style="display: none">
-              <h3>Dados do Equipamento</h3>
-
-              <input type="hidden" id="os-equipamento-id" />
-
-              <div class="form-group" style="margin-bottom: 20px">
-                <button
-                  type="button"
-                  id="btn-abrir-modal-equipamento"
-                  class="btn-primary"
-                  style="
-                    width: 100%;
-                    padding: 12px;
-                    font-size: 1.05em;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                  "
-                >
-                  🔍 Selecionar / Buscar Equipamento Cadastrado
-                </button>
-              </div>
-
-              <div class="form-group">
-                <label>Tipo</label>
-                <input
-                  type="text"
-                  id="os-equip-tipo"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Marca</label>
-                <input
-                  type="text"
-                  id="os-equip-fabricante"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Modelo</label>
-                <input
-                  type="text"
-                  id="os-equip-modelo"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Nº de Série</label>
-                <input
-                  type="text"
-                  id="os-equip-serie"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Patrimônio / TAG</label>
-                <input
-                  type="text"
-                  id="os-equip-patrimonio"
-                  class="form-control"
-                  readonly
-                />
-              </div>
-
-              <div class="form-group">
-                <label>Aspecto / Aparência na Recepção</label>
-                <input
-                  type="text"
-                  id="os-aspecto-aparencia"
-                  class="form-control"
-                  placeholder="Ex: Sem avarias externas, acompanha cabo de força..."
-                />
-              </div>
-            </div>
-
-            <!-- Aba 3: Laudo Técnico -->
-            <div id="aba-laudo" class="tab-pane" style="display: none">
-              <h3>Laudo Técnico e Diagnóstico</h3>
-
-              <div class="form-group">
-                <label>Defeito Relatado</label>
-                <textarea
-                  id="os-defeito-relatado"
-                  class="form-control"
-                  rows="3"
-                  placeholder="Relato inicial do cliente sobre o problema..."
-                ></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>Defeito Constatado</label>
-                <textarea
-                  id="os-defeito-constatado"
-                  class="form-control"
-                  rows="3"
-                  placeholder="Diagnóstico técnico identificado na avaliação..."
-                ></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>Serviço Realizado</label>
-                <textarea
-                  id="os-servico-realizado"
-                  class="form-control"
-                  rows="6"
-                  placeholder="Descreva detalhadamente a manutenção ou reparos executados..."
-                ></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>Observações Técnicas Internas</label>
-                <textarea
-                  id="os-observacoes-tecnicas"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Anotações internas..."
-                ></textarea>
-              </div>
-
-              <div
-                class="form-row"
-                style="
-                  margin-top: 20px;
-                  align-items: center;
-                  justify-content: flex-end;
-                "
-              >
-                <button
-                  type="button"
-                  id="btn-laudo-ia"
-                  class="btn-primary"
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: linear-gradient(135deg, #2e3091, #0056b3);
-                  "
-                >
-                  ✨ Melhorar Laudo com IA
-                </button>
-              </div>
-            </div>
-
-            <!-- Aba 4: Produtos, Serviços e Valores -->
-            <div id="aba-financeiro" class="tab-pane" style="display: none">
-              <h3>Serviços Executados</h3>
-
-              <!-- Botão para Adicionar Serviço -->
-              <div style="margin-bottom: 10px">
-                <button
-                  type="button"
-                  id="btn-add-servico"
-                  class="btn-secondary"
-                >
-                  🛠️ Adicionar Serviço
-                </button>
-              </div>
-
-              <!-- Tabela de Serviços -->
-              <div style="overflow-x: auto; margin-bottom: 25px">
-                <table
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    background: #fff;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 6px;
-                  "
-                >
-                  <thead>
-                    <tr
-                      style="
-                        background: #f8fafc;
-                        border-bottom: 1px solid #e2e8f0;
-                        text-align: left;
-                        font-size: 0.9em;
-                        color: #475569;
-                      "
-                    >
-                      <th style="padding: 10px 12px">Descrição do Serviço</th>
-                      <th style="padding: 10px 12px; width: 120px">
-                        Preço Unit. (R$)
-                      </th>
-                      <th style="padding: 10px 12px; width: 80px">Qtd</th>
-                      <th style="padding: 10px 12px; width: 100px">
-                        Total (R$)
-                      </th>
-                      <th
-                        style="
-                          padding: 10px 12px;
-                          width: 60px;
-                          text-align: center;
-                        "
-                      >
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabela-servicos-os">
-                    <tr>
-                      <td
-                        colspan="5"
-                        style="
-                          padding: 15px;
-                          text-align: center;
-                          color: #94a3b8;
-                          font-size: 0.9em;
-                        "
-                      >
-                        Nenhum serviço lançado.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <h3 style="margin-top: 30px">Peças e Produtos Utilizados</h3>
-
-              <!-- Botão para Adicionar Produto -->
-              <div style="margin-bottom: 10px">
-                <button
-                  type="button"
-                  id="btn-add-produto"
-                  class="btn-secondary"
-                >
-                  📦 Adicionar Peça / Produto
-                </button>
-              </div>
-
-              <!-- Tabela de Produtos -->
-              <div style="overflow-x: auto; margin-bottom: 25px">
-                <table
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    background: #fff;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 6px;
-                  "
-                >
-                  <thead>
-                    <tr
-                      style="
-                        background: #f8fafc;
-                        border-bottom: 1px solid #e2e8f0;
-                        text-align: left;
-                        font-size: 0.9em;
-                        color: #475569;
-                      "
-                    >
-                      <th style="padding: 10px 12px">Peça / Produto</th>
-                      <th style="padding: 10px 12px; width: 120px">
-                        Preço Unit. (R$)
-                      </th>
-                      <th style="padding: 10px 12px; width: 80px">Qtd</th>
-                      <th style="padding: 10px 12px; width: 100px">
-                        Total (R$)
-                      </th>
-                      <th
-                        style="
-                          padding: 10px 12px;
-                          width: 60px;
-                          text-align: center;
-                        "
-                      >
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabela-produtos-os">
-                    <tr>
-                      <td
-                        colspan="5"
-                        style="
-                          padding: 15px;
-                          text-align: center;
-                          color: #94a3b8;
-                          font-size: 0.9em;
-                        "
-                      >
-                        Nenhuma peça lançada.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Bloco de Totais com Valor Personalizado -->
-              <div
-                style="
-                  background: #f8fafc;
-                  border: 1px solid #e2e8f0;
-                  border-radius: 6px;
-                  padding: 20px;
-                "
-              >
-                <h4
-                  style="
-                    margin-top: 0;
-                    margin-bottom: 15px;
-                    color: #1e293b;
-                    font-size: 1.05em;
-                  "
-                >
-                  Resumo Financeiro
-                </h4>
-
+              <!-- Aba 2: Equipamento -->
+              <div id="aba-equipamento" class="tab-pane" style="display: none">
                 <div
                   style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 15px;
-                  "
-                >
-                  <div class="form-group" style="margin-bottom: 0">
-                    <label>Subtotal (Serviços + Peças)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      id="os-subtotal"
-                      class="form-control"
-                      value="0.00"
-                      readonly
-                    />
-                  </div>
-
-                  <div class="form-group" style="margin-bottom: 0">
-                    <label>Desconto Geral (R$)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      id="os-desconto"
-                      class="form-control"
-                      value="0.00"
-                    />
-                  </div>
-
-                  <div class="form-group" style="margin-bottom: 0">
-                    <label style="color: #0f172a; font-weight: bold"
-                      >Valor Total da OS (Editável)</label
-                    >
-                    <input
-                      type="number"
-                      step="0.01"
-                      id="os-valor-total"
-                      class="form-control"
-                      value="0.00"
-                      style="
-                        font-weight: bold;
-                        color: #047857;
-                        background: #ecfdf5;
-                        border-color: #10b981;
-                      "
-                    />
-                  </div>
-                </div>
-                <small
-                  style="
-                    display: block;
-                    margin-top: 10px;
-                    color: #64748b;
-                    font-size: 0.85em;
-                  "
-                >
-                  💡 O sistema calcula o subtotal automaticamente com base nos
-                  itens, mas você pode alterar o
-                  <b>Valor Total da OS</b> manualmente a qualquer momento para
-                  aplicar um preço personalizado.
-                </small>
-              </div>
-            </div>
-
-            <!-- Aba 5: Imagens e Evidências -->
-            <div id="aba-imagens" class="tab-pane" style="display: none">
-              <h3>Fotos e Evidências da OS</h3>
-
-              <!-- Botões de Ação Duplos (Câmera Direta ou Galeria) -->
-              <div class="form-group" style="margin-bottom: 25px">
-                <label
-                  style="
-                    font-weight: bold;
-                    color: #1e293b;
-                    display: block;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 10px;
+                    flex-wrap: wrap;
                     margin-bottom: 12px;
                   "
-                  >Adicionar Imagens (Fotos)</label
                 >
+                  <h3 style="margin: 0">Dados do Equipamento</h3>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                    <button
+                      type="button"
+                      id="btn-abrir-modal-equipamento"
+                      class="btn-secondary"
+                      style="padding: 6px 12px; font-size: 0.85em"
+                    >
+                      🔍 Buscar em Lista Completa
+                    </button>
+                    <button
+                      type="button"
+                      id="btn-salvar-equipamento-parque"
+                      class="btn-secondary"
+                      style="
+                        padding: 6px 12px;
+                        font-size: 0.85em;
+                        border: 1px dashed #94a3b8;
+                        color: #334155;
+                        background: #f8fafc;
+                      "
+                      title="Salvar ou atualizar este equipamento no cadastro do cliente"
+                    >
+                      💾 Salvar no Cadastro
+                    </button>
+                  </div>
+                </div>
 
-                <div style="display: flex; gap: 12px; flex-wrap: wrap">
-                  <!-- Botão para Câmera Direta -->
-                  <button
-                    type="button"
-                    onclick="document.getElementById('os-input-camera').click()"
-                    class="btn-primary"
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: 8px;
-                      padding: 10px 18px;
-                    "
+                <input type="hidden" id="os-equipamento-id" />
+
+                <div class="form-group" style="position: relative">
+                  <label for="os-equip-tipo">Tipo</label>
+                  <input
+                    type="text"
+                    id="os-equip-tipo"
+                    class="form-control os-equip-combo-input"
+                    autocomplete="off"
+                    placeholder="Ex: Autoclave, Lavadora Ultrassônica..."
+                  />
+                  <div
+                    id="dropdown-equip-tipo"
+                    class="os-equip-dropdown"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="form-group" style="position: relative">
+                  <label for="os-equip-fabricante">Marca</label>
+                  <input
+                    type="text"
+                    id="os-equip-fabricante"
+                    class="form-control os-equip-combo-input"
+                    autocomplete="off"
+                    placeholder="Ex: Tuttnauer, Sanders, Sercon..."
+                  />
+                  <div
+                    id="dropdown-equip-fabricante"
+                    class="os-equip-dropdown"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="form-group" style="position: relative">
+                  <label for="os-equip-modelo">Modelo</label>
+                  <input
+                    type="text"
+                    id="os-equip-modelo"
+                    class="form-control os-equip-combo-input"
+                    autocomplete="off"
+                    placeholder="Ex: 2540EKA, SW2000WJ..."
+                  />
+                  <div
+                    id="dropdown-equip-modelo"
+                    class="os-equip-dropdown"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="form-group" style="position: relative">
+                  <label for="os-equip-serie">Nº de Série</label>
+                  <input
+                    type="text"
+                    id="os-equip-serie"
+                    class="form-control os-equip-combo-input"
+                    autocomplete="off"
+                    placeholder="Digite ou selecione o número de série..."
+                  />
+                  <div
+                    id="dropdown-equip-serie"
+                    class="os-equip-dropdown"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="form-group" style="position: relative">
+                  <label for="os-equip-patrimonio">Patrimônio / TAG</label>
+                  <input
+                    type="text"
+                    id="os-equip-patrimonio"
+                    class="form-control os-equip-combo-input"
+                    autocomplete="off"
+                    placeholder="Digite ou selecione o patrimônio / TAG..."
+                  />
+                  <div
+                    id="dropdown-equip-patrimonio"
+                    class="os-equip-dropdown"
+                    style="display: none"
+                  ></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="os-aspecto-aparencia"
+                    >Aspecto / Aparência na Recepção</label
                   >
-                    📸 Tirar Foto com a Câmera
-                  </button>
+                  <input
+                    type="text"
+                    id="os-aspecto-aparencia"
+                    class="form-control"
+                    placeholder="Ex: Sem avarias externas, acompanha cabo de força..."
+                  />
+                </div>
+              </div>
 
-                  <!-- Botão para Galeria / Arquivos -->
+              <!-- Aba 3: Laudo Técnico e Execução -->
+              <div id="aba-laudo" class="tab-pane" style="display: none">
+                <h3>Execução do Serviço</h3>
+                <div class="os-datas-grid">
+                  <div class="form-group os-campo-compacto">
+                    <label for="os-data-inicio-servico"
+                      >Início do Serviço</label
+                    >
+                    <input
+                      type="datetime-local"
+                      id="os-data-inicio-servico"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="form-group os-campo-compacto">
+                    <label for="os-data-conclusao">Término do Serviço</label>
+                    <input
+                      type="datetime-local"
+                      id="os-data-conclusao"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+
+                <h3>Laudo Técnico e Diagnóstico</h3>
+                <div class="form-group">
+                  <label>Defeito Relatado</label>
+                  <textarea
+                    id="os-defeito-relatado"
+                    class="form-control"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Defeito Constatado</label>
+                  <textarea
+                    id="os-defeito-constatado"
+                    class="form-control"
+                    rows="3"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Serviço Realizado</label>
+                  <textarea
+                    id="os-servico-realizado"
+                    class="form-control"
+                    rows="6"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label>Observações Técnicas Internas</label>
+                  <textarea
+                    id="os-observacoes-tecnicas"
+                    class="form-control"
+                    rows="2"
+                  ></textarea>
+                </div>
+                <div class="os-acoes-direita">
                   <button
                     type="button"
-                    onclick="document.getElementById('os-input-galeria').click()"
+                    id="btn-laudo-ia"
+                    class="btn-primary os-btn-ia"
+                  >
+                    ✨ Melhorar Laudo com IA
+                  </button>
+                </div>
+              </div>
+
+              <!-- Aba 4: Financeiro e Orçamento -->
+              <div id="aba-financeiro" class="tab-pane" style="display: none">
+                <h3>Controle do Orçamento</h3>
+                <div class="os-datas-grid os-bloco-orcamento-datas">
+                  <div class="form-group os-campo-compacto">
+                    <label for="os-data-orcamento">Data do Orçamento</label>
+                    <input
+                      type="datetime-local"
+                      id="os-data-orcamento"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="form-group os-campo-compacto">
+                    <label for="os-data-validade-orcamento">
+                      Validade do Orçamento
+                    </label>
+                    <input
+                      type="date"
+                      id="os-data-validade-orcamento"
+                      class="form-control"
+                    />
+                  </div>
+                  <div class="form-group os-campo-compacto">
+                    <label for="os-data-aprovacao">Data de Aprovação</label>
+                    <input
+                      type="datetime-local"
+                      id="os-data-aprovacao"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+
+                <h3>Serviços Executados</h3>
+                <div class="os-acao-bloco">
+                  <button
+                    type="button"
+                    id="btn-add-servico"
                     class="btn-secondary"
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: 8px;
-                      padding: 10px 18px;
-                    "
                   >
-                    🖼️ Escolher da Galeria
+                    🛠️ Adicionar Serviço
                   </button>
                 </div>
+                <div class="os-subtabela-wrap">
+                  <table class="os-subtabela">
+                    <thead>
+                      <tr>
+                        <th>Descrição do Serviço</th>
+                        <th style="width: 120px">Preço Unit. (R$)</th>
+                        <th style="width: 80px">Qtd</th>
+                        <th style="width: 100px">Total (R$)</th>
+                        <th style="width: 60px; text-align: center">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabela-servicos-os"></tbody>
+                  </table>
+                </div>
 
-                <!-- Inputs Ocultos para manipulação separada -->
-                <input
-                  type="file"
-                  id="os-input-camera"
-                  accept="image/*"
-                  capture="environment"
-                  style="display: none"
-                />
-                <input
-                  type="file"
-                  id="os-input-galeria"
-                  accept="image/*"
-                  multiple
-                  style="display: none"
-                />
+                <h3 class="os-titulo-secao">Peças e Produtos Utilizados</h3>
+                <div class="os-acao-bloco">
+                  <button
+                    type="button"
+                    id="btn-add-produto"
+                    class="btn-secondary"
+                  >
+                    📦 Adicionar Peça / Produto
+                  </button>
+                </div>
+                <div class="os-subtabela-wrap">
+                  <table class="os-subtabela">
+                    <thead>
+                      <tr>
+                        <th>Peça / Produto</th>
+                        <th style="width: 120px">Preço Unit. (R$)</th>
+                        <th style="width: 80px">Qtd</th>
+                        <th style="width: 100px">Total (R$)</th>
+                        <th style="width: 60px; text-align: center">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabela-produtos-os"></tbody>
+                  </table>
+                </div>
 
-                <small style="color: #64748b; display: block; margin-top: 8px">
-                  💡 Use "Tirar Foto" para abrir a câmera imediatamente ou
-                  "Escolher da Galeria" para selecionar uma ou mais imagens já
-                  salvas no dispositivo.
-                </small>
-              </div>
-
-              <!-- Container onde as miniaturas (thumbnails) e legendas aparecerão dinamicamente -->
-              <div
-                id="os-galeria-imagens"
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                  gap: 20px;
-                "
-              >
-                <!-- Estado vazio inicial -->
-                <div
-                  style="
-                    grid-column: 1 / -1;
-                    padding: 30px;
-                    text-align: center;
-                    background: #f8fafc;
-                    border: 2px dashed #cbd5e1;
-                    border-radius: 8px;
-                    color: #64748b;
-                  "
-                >
-                  📸 Nenhuma imagem anexada a esta Ordem de Serviço ainda.
+                <div class="os-resumo-financeiro">
+                  <h4>Resumo Financeiro</h4>
+                  <div class="os-resumo-grid">
+                    <div class="form-group os-campo-compacto">
+                      <label>Subtotal (Serviços + Peças)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        id="os-subtotal"
+                        class="form-control"
+                        value="0.00"
+                        readonly
+                      />
+                    </div>
+                    <div class="form-group os-campo-compacto">
+                      <label>Desconto Geral (R$)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        id="os-desconto"
+                        class="form-control"
+                        value="0.00"
+                      />
+                    </div>
+                    <div class="form-group os-campo-compacto">
+                      <label class="os-label-total">
+                        Valor Total da OS (Editável)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        id="os-valor-total"
+                        class="form-control os-input-total"
+                        value="0.00"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Botão Global de Salvar + Ações -->
-            <div
-              class="form-actions"
-              style="
-                margin-top: 30px;
-                border-top: 1px solid #eee;
-                padding-top: 20px;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-                justify-content: space-between;
-                align-items: center;
-              "
-            >
-              <div style="display: flex; flex-wrap: wrap; gap: 10px">
-                <button
-                  type="button"
-                  id="btn-duplicar-os"
-                  class="btn-secondary"
-                  style="display: none"
-                >
-                  📋 Duplicar OS
-                </button>
-                <button
-                  type="button"
-                  id="btn-encerrar-pdf-os"
-                  class="btn-secondary"
-                  style="display: none"
-                >
-                  📄 Encerrar e Gerar PDF
-                </button>
+              <!-- Aba 5: Imagens -->
+              <div id="aba-imagens" class="tab-pane" style="display: none">
+                <h3>Fotos e Evidências da OS</h3>
+                <div class="form-group os-galeria-topo">
+                  <div class="os-galeria-botoes">
+                    <button
+                      type="button"
+                      onclick="
+                        document.getElementById('os-input-camera').click()
+                      "
+                      class="btn-primary os-btn-foto"
+                    >
+                      📸 Tirar Foto com a Câmera
+                    </button>
+                    <button
+                      type="button"
+                      onclick="
+                        document.getElementById('os-input-galeria').click()
+                      "
+                      class="btn-secondary os-btn-foto"
+                    >
+                      🖼️ Escolher da Galeria
+                    </button>
+                  </div>
+                  <input
+                    type="file"
+                    id="os-input-camera"
+                    accept="image/*"
+                    capture="environment"
+                    style="display: none"
+                  />
+                  <input
+                    type="file"
+                    id="os-input-galeria"
+                    accept="image/*"
+                    multiple
+                    style="display: none"
+                  />
+                </div>
+                <div id="os-galeria-imagens" class="os-galeria-grid"></div>
               </div>
 
-              <div style="display: flex; flex-wrap: wrap; gap: 10px">
-                <button
-                  type="button"
-                  id="btn-cancelar-edicao-os"
-                  class="btn-secondary"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  class="btn-primary"
-                  style="padding: 12px 25px; font-size: 1.05em"
-                >
-                  💾 Salvar Ordem de Serviço
-                </button>
+              <!-- Rodapé de Ações -->
+              <div class="os-form-actions">
+                <div class="os-form-actions-grupo">
+                  <button
+                    type="button"
+                    id="btn-duplicar-os"
+                    class="btn-secondary"
+                    style="display: none"
+                  >
+                    📋 Duplicar OS
+                  </button>
+                  <button
+                    type="button"
+                    id="btn-encerrar-pdf-os"
+                    class="btn-secondary"
+                    style="display: none"
+                  >
+                    📄 Encerrar e Gerar PDF
+                  </button>
+                </div>
+                <div class="os-form-actions-grupo">
+                  <button
+                    type="button"
+                    id="btn-cancelar-edicao-os"
+                    class="btn-secondary"
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" class="btn-primary os-btn-salvar">
+                    💾 Salvar Ordem de Serviço
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </section>
     </main>
 
-    <!-- ========================================================= -->
-    <!-- MODAIS DE BUSCA E SELEÇÃO                                 -->
-    <!-- ========================================================= -->
-
-    <!-- Modal: Selecionar Cliente -->
-    <div id="modal-selecionar-cliente" class="modal-overlay" style="display: none">
-      <div class="modal-content" style="max-width: 720px; width: 95%">
+    <!-- Modal de Histórico de Interações e Datas da OS -->
+    <div id="modal-historico-os" class="modal-overlay" style="display: none">
+      <div class="modal-content os-modal-historico">
         <div class="modal-header">
-          <h3>Selecionar Cliente</h3>
+          <h3>Histórico & Linha do Tempo</h3>
           <button
             type="button"
             class="btn-close-modal"
-            data-close-modal="modal-selecionar-cliente"
+            data-close-modal="modal-historico-os"
           >
             &times;
           </button>
         </div>
         <div class="modal-body">
-          <input
-            type="text"
-            id="busca-modal-cliente"
-            class="form-control"
-            placeholder="Buscar por razão social, nome fantasia ou CNPJ/CPF..."
-            style="margin-bottom: 14px"
-          />
-          <div style="max-height: 360px; overflow-y: auto">
-            <table style="width: 100%; border-collapse: collapse">
-              <thead>
-                <tr
-                  style="
-                    background: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                  "
-                >
-                  <th style="padding: 8px 10px">Cliente</th>
-                  <th style="padding: 8px 10px">CNPJ / CPF</th>
-                  <th style="padding: 8px 10px">Cidade / UF</th>
-                  <th style="padding: 8px 10px; width: 90px">Ação</th>
-                </tr>
-              </thead>
-              <tbody id="lista-modal-clientes"></tbody>
-            </table>
+          <div class="os-hist-filtros">
+            <button
+              type="button"
+              class="btn-secondary os-hist-escopo-btn active"
+              data-escopo="OS"
+            >
+              Nesta OS
+            </button>
+            <button
+              type="button"
+              class="btn-secondary os-hist-escopo-btn"
+              data-escopo="EQUIPAMENTO"
+            >
+              Do Equipamento
+            </button>
+            <button
+              type="button"
+              class="btn-secondary os-hist-escopo-btn"
+              data-escopo="CLIENTE"
+            >
+              Do Cliente
+            </button>
+          </div>
+
+          <form id="form-novo-historico-os" class="os-hist-form">
+            <div class="os-hist-form-linha">
+              <select id="os-hist-tipo" class="form-control os-hist-tipo">
+                <option value="TELEFONE">📞 Ligação</option>
+                <option value="WHATSAPP">💬 WhatsApp</option>
+                <option value="EMAIL">✉️ E-mail</option>
+                <option value="VISITA">🏥 Visita / Presencial</option>
+                <option value="SISTEMA_DATA">📅 Marco / Data</option>
+              </select>
+              <input
+                type="text"
+                id="os-hist-descricao"
+                class="form-control os-hist-input"
+                placeholder="Registrar contato, retorno de orçamento ou observação..."
+                required
+              />
+              <button type="submit" class="btn-primary">Registrar</button>
+            </div>
+          </form>
+
+          <div id="os-hist-lista" class="os-hist-lista">
+            <p class="os-hist-vazio">
+              Selecione ou abra uma OS para ver o histórico.
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Contatos do Cliente -->
-    <div
-      id="modal-contatos-cliente-os"
-      class="modal-overlay"
-      style="display: none"
-    >
-      <div class="modal-content" style="max-width: 620px; width: 95%">
-        <div class="modal-header">
-          <h3>Contatos do Cliente</h3>
-          <button
-            type="button"
-            class="btn-close-modal"
-            data-close-modal="modal-contatos-cliente-os"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body" id="conteudo-contatos-cliente-os"></div>
-      </div>
-    </div>
+    <!-- Slots onde os modais em ordem-servico/*.html serão carregados -->
+    <div id="slot-modal-cliente"></div>
+    <div id="slot-modal-contatos"></div>
+    <div id="slot-modal-equipamento"></div>
+    <div id="slot-modal-servico"></div>
+    <div id="slot-modal-produto"></div>
 
-    <!-- Modal: Selecionar Equipamento do Parque Instalado -->
-    <div
-      id="modal-selecionar-equipamento"
-      class="modal-overlay"
-      style="display: none"
-    >
-      <div class="modal-content" style="max-width: 780px; width: 95%">
-        <div class="modal-header">
-          <h3>Selecionar Equipamento do Cliente</h3>
-          <button
-            type="button"
-            class="btn-close-modal"
-            data-close-modal="modal-selecionar-equipamento"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <input
-            type="text"
-            id="busca-modal-equipamento"
-            class="form-control"
-            placeholder="Filtrar por tipo, marca, modelo, série ou patrimônio..."
-            style="margin-bottom: 14px"
-          />
-          <div style="max-height: 360px; overflow-y: auto">
-            <table style="width: 100%; border-collapse: collapse">
-              <thead>
-                <tr
-                  style="
-                    background: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                  "
-                >
-                  <th style="padding: 8px 10px">
-                    Equipamento (Tipo / Marca / Modelo)
-                  </th>
-                  <th style="padding: 8px 10px">Nº Série</th>
-                  <th style="padding: 8px 10px">Patrimônio</th>
-                  <th style="padding: 8px 10px; width: 90px">Ação</th>
-                </tr>
-              </thead>
-              <tbody id="lista-modal-equipamentos"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Adicionar Serviço -->
-    <div
-      id="modal-adicionar-servico-os"
-      class="modal-overlay"
-      style="display: none"
-    >
-      <div class="modal-content" style="max-width: 680px; width: 95%">
-        <div class="modal-header">
-          <h3>Adicionar Serviço à OS</h3>
-          <button
-            type="button"
-            class="btn-close-modal"
-            data-close-modal="modal-adicionar-servico-os"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <input
-            type="text"
-            id="busca-modal-servico"
-            class="form-control"
-            placeholder="Buscar serviço por SKU ou descrição..."
-            style="margin-bottom: 14px"
-          />
-          <div style="max-height: 360px; overflow-y: auto">
-            <table style="width: 100%; border-collapse: collapse">
-              <thead>
-                <tr
-                  style="
-                    background: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                  "
-                >
-                  <th style="padding: 8px 10px">SKU</th>
-                  <th style="padding: 8px 10px">Serviço</th>
-                  <th style="padding: 8px 10px">Valor (R$)</th>
-                  <th style="padding: 8px 10px; width: 90px">Ação</th>
-                </tr>
-              </thead>
-              <tbody id="lista-modal-servicos"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Adicionar Produto / Peça -->
-    <div
-      id="modal-adicionar-produto-os"
-      class="modal-overlay"
-      style="display: none"
-    >
-      <div class="modal-content" style="max-width: 720px; width: 95%">
-        <div class="modal-header">
-          <h3>Adicionar Peça / Produto à OS</h3>
-          <button
-            type="button"
-            class="btn-close-modal"
-            data-close-modal="modal-adicionar-produto-os"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <input
-            type="text"
-            id="busca-modal-produto"
-            class="form-control"
-            placeholder="Buscar peça por SKU, nome ou código..."
-            style="margin-bottom: 14px"
-          />
-          <div style="max-height: 360px; overflow-y: auto">
-            <table style="width: 100%; border-collapse: collapse">
-              <thead>
-                <tr
-                  style="
-                    background: #f8fafc;
-                    border-bottom: 1px solid #e2e8f0;
-                    text-align: left;
-                  "
-                >
-                  <th style="padding: 8px 10px">SKU</th>
-                  <th style="padding: 8px 10px">Produto / Peça</th>
-                  <th style="padding: 8px 10px">Estoque</th>
-                  <th style="padding: 8px 10px">Preço (R$)</th>
-                  <th style="padding: 8px 10px; width: 90px">Ação</th>
-                </tr>
-              </thead>
-              <tbody id="lista-modal-produtos"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scripts -->
     <script src="js/core/sidebar.js"></script>
     <script type="module" src="js/ordens-servico/ordens-main.js"></script>
   </body>

@@ -1,0 +1,143 @@
+<div
+  id="modal-contatos-cliente"
+  class="modal-overlay modal-sobreposto"
+  style="display: none; z-index: 1100"
+>
+  <div class="modal-card" style="max-width: 780px">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      "
+    >
+      <div>
+        <h2 style="margin: 0; color: var(--azul-logo-trufos); border: none">
+          👥 Contatos / Pessoas
+        </h2>
+        <small id="modal-contatos-subtitulo" style="color: #64748b"></small>
+      </div>
+      <button
+        type="button"
+        data-close-modal="modal-contatos-cliente"
+        aria-label="Fechar modal"
+        style="
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          color: #64748b;
+        "
+      >
+        ✖
+      </button>
+    </div>
+
+    <form
+      id="form-contato-os"
+      style="
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 18px;
+      "
+    >
+      <input type="hidden" id="contato-os-id" />
+
+      <div class="form-row" style="margin-bottom: 10px">
+        <div>
+          <label class="form-label" for="contato-os-nome">Nome *</label>
+          <input
+            type="text"
+            id="contato-os-nome"
+            placeholder="Ex: Dra. Ana / Eng. Carlos"
+            class="form-input"
+            required
+          />
+        </div>
+        <div>
+          <label class="form-label" for="contato-os-departamento"
+            >Departamento / Cargo</label
+          >
+          <input
+            type="text"
+            id="contato-os-departamento"
+            placeholder="Ex: CME, Engenharia, Compras"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <div
+        style="
+          display: grid;
+          grid-template-columns: 1fr 1.5fr auto auto;
+          gap: 10px;
+          align-items: end;
+        "
+      >
+        <div>
+          <label class="form-label" for="contato-os-telefone"
+            >Telefone / WhatsApp</label
+          >
+          <input
+            type="text"
+            id="contato-os-telefone"
+            placeholder="(51) 99999-9999"
+            class="form-input"
+          />
+        </div>
+        <div>
+          <label class="form-label" for="contato-os-email">E-mail</label>
+          <input
+            type="email"
+            id="contato-os-email"
+            placeholder="contato@clinica.com.br"
+            class="form-input"
+          />
+        </div>
+        <button
+          type="button"
+          id="btn-cancelar-edicao-contato"
+          style="
+            display: none;
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+          "
+        >
+          Cancelar
+        </button>
+        <button type="submit" id="btn-salvar-contato-os" class="btn-principal">
+          + Adicionar
+        </button>
+      </div>
+    </form>
+
+    <div style="max-height: 280px; overflow-y: auto">
+      <table class="tabela-dados">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Setor</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th style="text-align: center">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="lista-modal-contatos">
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 15px">
+              Carregando...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
