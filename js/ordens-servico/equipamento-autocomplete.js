@@ -11,7 +11,7 @@ export async function salvarEquipamentoNaHierarquia({
   endpoints,
   dadosEquipamento,
 }) {
-  const { salvarTipo, salvarMarca, salvarModelo, salvarParque, listarParque } =
+  const { salvarTipo, salvarMarca, salvarModelo, salvarParque } =
     endpoints || {};
 
   if (!salvarParque) {
@@ -76,60 +76,12 @@ export async function salvarEquipamentoNaHierarquia({
     modeloId = extrairId(dModelo);
   }
 
-  // Resolve ID existente para evitar duplicar o mesmo equipamento do cliente
-  let equipamentoId = dadosEquipamento.id ? Number(dadosEquipamento.id) : null;
-  const serieLimpa = String(dadosEquipamento.numero_serie || "")
-    .trim()
-    .toLowerCase();
-  const tagLimpa = String(dadosEquipamento.patrimonio_tag || "")
-    .trim()
-    .toLowerCase();
-
-  if (
-    !equipamentoId &&
-    listarParque &&
-    dadosEquipamento.cliente_id &&
-    (serieLimpa || tagLimpa)
-  ) {
-    try {
-      const rLista = await fetch(
-        `${listarParque}?cliente_id=${encodeURIComponent(dadosEquipamento.cliente_id)}`,
-      );
-      if (rLista.ok) {
-        const dLista = await rLista.json();
-        const itens = Array.isArray(dLista) ? dLista : dLista?.data || [];
-        const match = itens.find((eq) => {
-          if (String(eq.cliente_id) !== String(dadosEquipamento.cliente_id))
-            return false;
-          const eqSerie = String(eq.numero_serie || "")
-            .trim()
-            .toLowerCase();
-          const eqTag = String(eq.patrimonio_tag || eq.patrimonio || "")
-            .trim()
-            .toLowerCase();
-          const bateSerie = serieLimpa && eqSerie === serieLimpa;
-          const bateTag = tagLimpa && eqTag === tagLimpa;
-          const bateModelo =
-            !modeloId ||
-            !eq.modelo_id ||
-            String(eq.modelo_id) === String(modeloId);
-          return (bateSerie || bateTag) && bateModelo;
-        });
-        if (match?.id) {
-          equipamentoId = Number(match.id);
-        }
-      }
-    } catch {
-      // se falhar a consulta, segue sem bloquear o salvamento
-    }
-  }
-
-  // 4. Grava Parque Instalado
+  // 4. Grava Parque Instalado usando o ID existente quando houver
   const rParque = await fetch(salvarParque, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      id: equipamentoId,
+      id: dadosEquipamento.id ? Number(dadosEquipamento.id) : null,
       cliente_id: Number(dadosEquipamento.cliente_id),
       modelo_id: modeloId,
       numero_serie: dadosEquipamento.numero_serie || null,
@@ -148,8 +100,44 @@ export async function salvarEquipamentoNaHierarquia({
     tipoId,
     marcaId,
     modeloId,
-    equipamentoId: extrairId(dParque) || equipamentoId || null,
+    equipamentoId:
+      extrairId(dParque) ||
+      (dadosEquipamento.id ? Number(dadosEquipamento.id) : null),
   };
+}
+
+export function sincronizarCamposEquipamentoOS() {
+  const eqId = (
+    document.getElementById("os-equipamento-id")?.value || ""
+  ).trim();
+  const temVinculo = Boolean(eqId);
+
+  const camposFixos = [
+    "os-equip-tipo",
+    "os-equip-fabricante",
+    "os-equip-modelo",
+    "os-equip-serie",
+  ];
+
+  camposFixos.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.readOnly = temVinculo;
+    el.style.backgroundColor = temVinculo ? "#f8fafc" : "";
+    el.style.cursor = temVinculo ? "not-allowed" : "";
+    el.title = temVinculo
+      ? "Para trocar o equipamento ou alterar série/modelo, use 'Buscar em Lista Completa'."
+      : "";
+  });
+
+  // Patrimônio / TAG fica livre para ajuste rápido via OS
+  const patEl = document.getElementById("os-equip-patrimonio");
+  if (patEl) {
+    patEl.readOnly = false;
+    patEl.style.backgroundColor = "";
+    patEl.style.cursor = "";
+    patEl.title = "";
+  }
 }
 
 export function initEquipamentoAutocomplete({
@@ -193,74 +181,12 @@ export function initEquipamentoAutocomplete({
     if (el) el.value = "";
   }
 
-  function setBloqueado(id, bloqueado, msgBloqueio = "") {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.disabled = bloqueado;
-    el.style.backgroundColor = bloqueado ? "#f1f5f9" : "";
-    el.style.cursor = bloqueado ? "not-allowed" : "";
-    el.title = bloqueado && msgBloqueio ? msgBloqueio : "";
-  }
-
-  function sincronizarHierarquia() {
-    const tipoVal = (
-      document.getElementById("os-equip-tipo")?.value || ""
-    ).trim();
-    const marcaVal = (
-      document.getElementById("os-equip-fabricante")?.value || ""
-    ).trim();
-    const modeloVal = (
-      document.getElementById("os-equip-modelo")?.value || ""
-    ).trim();
-
-    const temTipo = Boolean(tipoVal);
-    const temMarca = temTipo && Boolean(marcaVal);
-    const temModelo = temMarca && Boolean(modeloVal);
-
-    if (!temTipo) {
-      selecionado.tipoId = null;
-      selecionado.marcaId = null;
-      selecionado.modeloId = null;
-      limparValor("os-equip-fabricante");
-      limparValor("os-equip-modelo");
-      limparValor("os-equip-serie");
-      limparValor("os-equip-patrimonio");
-      limparValor("os-equipamento-id");
-    } else if (!temMarca) {
-      selecionado.marcaId = null;
-      selecionado.modeloId = null;
-      limparValor("os-equip-modelo");
-      limparValor("os-equip-serie");
-      limparValor("os-equip-patrimonio");
-      limparValor("os-equipamento-id");
-    } else if (!temModelo) {
-      selecionado.modeloId = null;
-      limparValor("os-equip-serie");
-      limparValor("os-equip-patrimonio");
-      limparValor("os-equipamento-id");
-    }
-
-    setBloqueado("os-equip-tipo", false);
-    setBloqueado(
-      "os-equip-fabricante",
-      !temTipo,
-      "Preencha ou selecione o Tipo primeiro.",
-    );
-    setBloqueado(
-      "os-equip-modelo",
-      !temMarca,
-      "Preencha ou selecione a Marca primeiro.",
-    );
-    setBloqueado(
-      "os-equip-serie",
-      !temModelo,
-      "Preencha ou selecione o Modelo primeiro.",
-    );
-    setBloqueado(
-      "os-equip-patrimonio",
-      !temModelo,
-      "Preencha ou selecione o Modelo primeiro.",
-    );
+  function fecharTodosDropdowns(excetoId = null) {
+    idsDropdowns.forEach((dropdownId) => {
+      if (dropdownId === excetoId) return;
+      const el = document.getElementById(dropdownId);
+      if (el) el.style.display = "none";
+    });
   }
 
   async function fetchListaSegura(url) {
@@ -299,15 +225,13 @@ export function initEquipamentoAutocomplete({
     }
   }
 
-  function fecharTodosDropdowns(excetoId = null) {
-    idsDropdowns.forEach((dropdownId) => {
-      if (dropdownId === excetoId) return;
-      const el = document.getElementById(dropdownId);
-      if (el) el.style.display = "none";
-    });
-  }
-
   function podeAbrirCampo(campoKey) {
+    const temVinculo = Boolean(
+      (document.getElementById("os-equipamento-id")?.value || "").trim(),
+    );
+    // Quando já existe equipamento vinculado, apenas Patrimônio / TAG pode ser alterado via OS
+    if (temVinculo && campoKey !== "patrimonio") return false;
+
     const tipoVal = (
       document.getElementById("os-equip-tipo")?.value || ""
     ).trim();
@@ -502,7 +426,7 @@ export function initEquipamentoAutocomplete({
         item.meta.equipamentoId;
     }
 
-    sincronizarHierarquia();
+    sincronizarCamposEquipamentoOS();
     fecharTodosDropdowns();
   }
 
@@ -595,15 +519,17 @@ export function initEquipamentoAutocomplete({
         selecionado.tipoId = null;
         selecionado.marcaId = null;
         selecionado.modeloId = null;
+        limparValor("os-equipamento-id");
       } else if (key === "marca") {
         selecionado.marcaId = null;
         selecionado.modeloId = null;
+        limparValor("os-equipamento-id");
       } else if (key === "modelo") {
         selecionado.modeloId = null;
-      } else if (key === "serie" || key === "patrimonio") {
-        document.getElementById("os-equipamento-id").value = "";
+        limparValor("os-equipamento-id");
+      } else if (key === "serie") {
+        limparValor("os-equipamento-id");
       }
-      sincronizarHierarquia();
       renderDropdown(key, inputId, dropdownId);
     });
   });
@@ -621,6 +547,9 @@ export function initEquipamentoAutocomplete({
     .getElementById("btn-salvar-equipamento-parque")
     ?.addEventListener("click", async () => {
       const clienteId = document.getElementById("os-cliente-id")?.value;
+      const eqIdAtual = (
+        document.getElementById("os-equipamento-id")?.value || ""
+      ).trim();
       const tipo = padronizarTexto(
         document.getElementById("os-equip-tipo")?.value || "",
         "TITLE",
@@ -662,7 +591,7 @@ export function initEquipamentoAutocomplete({
             salvarParque: endpointSalvar,
           },
           dadosEquipamento: {
-            id: document.getElementById("os-equipamento-id")?.value || null,
+            id: eqIdAtual || null,
             cliente_id: Number(clienteId),
             tipo_id: selecionado.tipoId,
             marca_id: selecionado.marcaId,
@@ -687,11 +616,12 @@ export function initEquipamentoAutocomplete({
             res.equipamentoId;
         }
 
+        sincronizarCamposEquipamentoOS();
         await Promise.all([
           carregarCatalogosAuxiliares(true),
           carregarParque(true),
         ]);
-        alert("Tipo, modelo e parque instalado salvos com sucesso!");
+        alert("Equipamento salvo/atualizado no cadastro do cliente!");
       } catch (err) {
         console.error(err);
         alert("Não foi possível salvar o equipamento no servidor.");
@@ -701,5 +631,5 @@ export function initEquipamentoAutocomplete({
       }
     });
 
-  sincronizarHierarquia();
+  sincronizarCamposEquipamentoOS();
 }

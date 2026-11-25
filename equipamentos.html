@@ -9,6 +9,46 @@
     <link rel="stylesheet" href="css/modais.css" />
     <link rel="icon" type="image/x-icon" href="img/Favicon.ico" />
     <script src="js/core/auth.js"></script>
+    <style>
+      .combo-busca-wrapper {
+        position: relative;
+      }
+      .combo-busca-lista {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.14);
+        max-height: 220px;
+        overflow-y: auto;
+        z-index: 1300;
+        display: none;
+      }
+      .combo-busca-item {
+        padding: 9px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.92rem;
+        color: #0f172a;
+      }
+      .combo-busca-item:last-child {
+        border-bottom: none;
+      }
+      .combo-busca-item:hover,
+      .combo-busca-item.ativo {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+      .combo-busca-vazio {
+        padding: 10px 12px;
+        color: #64748b;
+        font-size: 0.88rem;
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
     <!-- O menu lateral será inserido automaticamente aqui pelo JS -->
@@ -116,18 +156,34 @@
 
           <div class="form-group" style="margin-bottom: 15px">
             <label class="form-label">Cliente *</label>
-            <select id="cliente_id" required class="form-input">
-              <option value="">Selecione o cliente...</option>
-            </select>
+            <div class="combo-busca-wrapper">
+              <input type="hidden" id="cliente_id" />
+              <input
+                type="text"
+                id="buscaClienteParque"
+                class="form-input"
+                autocomplete="off"
+                placeholder="Digite o nome do cliente para buscar..."
+              />
+              <div id="listaClienteParque" class="combo-busca-lista"></div>
+            </div>
           </div>
 
           <div class="form-group" style="margin-bottom: 15px">
             <label class="form-label"
               >Equipamento (Tipo / Marca / Modelo) *</label
             >
-            <select id="modelo_id" required class="form-input">
-              <option value="">Selecione o modelo...</option>
-            </select>
+            <div class="combo-busca-wrapper">
+              <input type="hidden" id="modelo_id" />
+              <input
+                type="text"
+                id="buscaModeloParque"
+                class="form-input"
+                autocomplete="off"
+                placeholder="Digite tipo, marca ou modelo para buscar..."
+              />
+              <div id="listaModeloParque" class="combo-busca-lista"></div>
+            </div>
             <small
               id="resumoModeloSelecionado"
               style="
@@ -147,7 +203,7 @@
               display: grid;
               grid-template-columns: 1fr 1fr;
               gap: 15px;
-              margin-bottom: 15px;
+              margin-bottom: 8px;
             "
           >
             <div>
@@ -165,10 +221,21 @@
                 type="text"
                 id="patrimonio_tag"
                 class="form-input"
-                placeholder="Ex: PAT-0089"
+                placeholder="Ex: PAT-0089 ou TAG própria"
               />
             </div>
           </div>
+          <small
+            style="
+              display: block;
+              margin-bottom: 15px;
+              color: #64748b;
+              font-size: 0.8rem;
+            "
+          >
+            * Obrigatório informar pelo menos <strong>Nº de Série</strong> ou
+            <strong>Patrimônio / TAG</strong> para rastreabilidade.
+          </small>
 
           <div class="form-group" style="margin-bottom: 15px">
             <label class="form-label">Observações Técnicas</label>
@@ -391,15 +458,31 @@
           >
             <div>
               <label class="form-label">Tipo *</label>
-              <select id="modelo_tipo_id" required class="form-input">
-                <option value="">Selecione o tipo...</option>
-              </select>
+              <div class="combo-busca-wrapper">
+                <input type="hidden" id="modelo_tipo_id" />
+                <input
+                  type="text"
+                  id="buscaTipoModelo"
+                  class="form-input"
+                  autocomplete="off"
+                  placeholder="Digite para buscar o tipo..."
+                />
+                <div id="listaTipoModelo" class="combo-busca-lista"></div>
+              </div>
             </div>
             <div>
               <label class="form-label">Marca *</label>
-              <select id="modelo_marca_id" required class="form-input">
-                <option value="">Selecione a marca...</option>
-              </select>
+              <div class="combo-busca-wrapper">
+                <input type="hidden" id="modelo_marca_id" />
+                <input
+                  type="text"
+                  id="buscaMarcaModelo"
+                  class="form-input"
+                  autocomplete="off"
+                  placeholder="Digite para buscar a marca..."
+                />
+                <div id="listaMarcaModelo" class="combo-busca-lista"></div>
+              </div>
             </div>
           </div>
 

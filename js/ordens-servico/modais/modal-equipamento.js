@@ -1,3 +1,5 @@
+import { sincronizarCamposEquipamentoOS } from "../equipamento-autocomplete.js";
+
 export function initModalEquipamento(endpointParque, onIrAbaCliente) {
   let equipamentos = [];
 
@@ -67,6 +69,7 @@ export function initModalEquipamento(endpointParque, onIrAbaCliente) {
         document.getElementById("os-equip-serie").value = eq.numero_serie || "";
         document.getElementById("os-equip-patrimonio").value =
           eq.patrimonio || eq.patrimonio_tag || "";
+        sincronizarCamposEquipamentoOS();
         fechar();
       }),
     );

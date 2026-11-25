@@ -1,4 +1,8 @@
 import { padronizarTexto } from "./modais/modal-cliente.js";
+import {
+  salvarEquipamentoNaHierarquia,
+  sincronizarCamposEquipamentoOS,
+} from "./equipamento-autocomplete.js";
 
 const CAMPOS_DATA_MONITORADOS = [
   { campo: "data_agendada", rotulo: "Agendamento" },
@@ -19,13 +23,6 @@ export function createOSForm({
 }) {
   let imagens = [];
   let estadoInicial = null;
-
-  const dataHoje = () => {
-    const d = new Date();
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-      .toISOString()
-      .slice(0, 10);
-  };
 
   const dataHoraAgora = () => {
     const d = new Date();
@@ -155,6 +152,7 @@ export function createOSForm({
     estadoInicial = capturarSnapshot({ id: null, status: "ABERTA" }, false);
     financeiro.setItens([], [], 0, 0);
     renderImagens();
+    sincronizarCamposEquipamentoOS();
   }
 
   function preencher(os, duplicar = false) {
@@ -244,6 +242,8 @@ export function createOSForm({
       os.aspecto_aparencia || "",
       "TITLE",
     );
+
+    sincronizarCamposEquipamentoOS();
 
     document.getElementById("os-defeito-relatado").value =
       os.descricao_defeito || os.defeito_relatado || "";
@@ -378,6 +378,11 @@ export function createOSForm({
     }
 
     try {
+      const eqIdAtual =
+        document.getElementById("os-equipamento-id")?.value ||
+        dados.equipamento_id ||
+        null;
+
       const res = await salvarEquipamentoNaHierarquia({
         endpoints: {
           salvarTipo: endpoints.salvarEquipamentoTipo,
@@ -386,7 +391,7 @@ export function createOSForm({
           salvarParque: endpoints.salvarParqueInstalado,
         },
         dadosEquipamento: {
-          id: dados.equipamento_id || null,
+          id: eqIdAtual,
           cliente_id: Number(dados.cliente_id),
           tipo: dados.equip_tipo,
           fabricante: dados.equip_fabricante,
@@ -399,6 +404,8 @@ export function createOSForm({
 
       if (res?.equipamentoId) {
         document.getElementById("os-equipamento-id").value = res.equipamentoId;
+        dados.equipamento_id = res.equipamentoId;
+        sincronizarCamposEquipamentoOS();
       }
     } catch (errParque) {
       console.warn("Aviso ao sincronizar equipamento com o parque:", errParque);
